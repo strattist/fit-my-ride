@@ -1,0 +1,93 @@
+<title>Fit my Ride Diagrams</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: single readable column, plain-language guide for a non-technical reader. Diverging teal/amber echoes the heatmap itself. */
+:root{--bg:#f6f7f5;--surface:#ffffff;--ink:#1d2a2c;--muted:#56666a;--line:#d9dfdc;--accent:#0d6f73;--accent-soft:#dcefee;--warm:#b4570f;--warm-soft:#fbe8d5;--display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--body:'Instrument Sans','Segoe UI',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111a1b;--surface:#182526;--ink:#e6eeec;--muted:#9fb0ad;--line:#2b3b3c;--accent:#58c4c6;--accent-soft:#17393a;--warm:#f0a05c;--warm-soft:#3a2713;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111a1b;--surface:#182526;--ink:#e6eeec;--muted:#9fb0ad;--line:#2b3b3c;--accent:#58c4c6;--accent-soft:#17393a;--warm:#f0a05c;--warm-soft:#3a2713;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:20px;padding-block:32px}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:2.1rem}h2{font-size:1.4rem}h3{font-size:1.1rem}
+p{margin:0}p+p{margin-top:.8em}
+.lede{font-size:1.15rem;color:var(--muted)}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+section{display:flex;flex-direction:column;gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.grid>*{min-width:0}
+.tag{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.tag.warm{background:var(--warm-soft);color:var(--warm)}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+dl{margin:0;display:flex;flex-direction:column;gap:10px}dt{font-weight:600}dd{margin:0;color:var(--muted)}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto}
+.call{border-left:4px solid var(--warm);padding:8px 14px;background:var(--warm-soft);border-radius:0 8px 8px 0}
+footer{color:var(--muted);font-size:.85rem}
+</style>
+
+<main>
+
+<header><div class="eyebrow">Diagram set · four pictures</div>
+<h1>Fit my Ride in four pictures</h1>
+<p class="lede">Read them in order. Each has a short note on what to look at.</p></header>
+
+<section><h2>1. The big picture</h2>
+<div class="diagram"><pre class="mermaid">
+flowchart LR
+  A["Brand PDF<br/>(KTM, Van Rysel)"] --> B["Reading tool<br/>on the builder's computer"]
+  B --> C{"Person reviews<br/>and approves"}
+  C -->|approved| D["Data files<br/>in the project"]
+  D --> E["App on the home server<br/>(read-only)"]
+  F["Rider's phone<br/>or laptop"] --> E
+</pre></div>
+<p>Look for: the only way new bikes get in is through the person-approves step. The app on the server can only read.</p></section>
+
+<section><h2>2. Adding a brand's bikes</h2>
+<div class="diagram"><pre class="mermaid">
+flowchart TD
+  A["1. Pick pages of the PDF"] --> B["2. AI helps read the tables"]
+  B --> C["3. Translate names and units<br/>to our standard"]
+  C --> D["4. Settle conflicts<br/>by fixed rules"]
+  D --> E{"5. Any of the 5 core<br/>measurements missing?"}
+  E -->|yes| X["Bike held back<br/>and listed in review"]
+  E -->|no| F{"6. You approve?"}
+  F -->|no| Z["Nothing saved"]
+  F -->|yes| G["7. Saved as plain files"]
+</pre></div>
+<p>Look for: two exits where nothing gets saved. Running it again on the same PDF changes nothing.</p></section>
+
+<section><h2>3. A rider checks bikes</h2>
+<div class="diagram"><pre class="mermaid">
+flowchart LR
+  A["Rider enters<br/>height, inseam, style"] --> B["App picks best frame size<br/>for each bike"]
+  B --> C["Each of 5 measurements<br/>compared to ideal range"]
+  C --> D["Coloured table<br/>sortable by column"]
+</pre></div>
+<p>Look for: no AI, no account and no server storage anywhere in this path.</p></section>
+
+<section><h2>4. Who can change what</h2>
+<div class="diagram"><pre class="mermaid">
+flowchart TB
+  subgraph rules["Meaning of things (written once)"]
+    R["Units, names, fit rules,<br/>conflict rules"]
+  end
+  subgraph brand["Per brand"]
+    K["KTM reader"]
+    V["Van Rysel reader"]
+  end
+  subgraph apps["Two entry points"]
+    W["Web app"]
+    I["Ingestion tool"]
+  end
+  K --> R
+  V --> R
+  I --> K
+  I --> V
+  I --> R
+  W --> R
+</pre></div>
+<p>Look for: the app and the ingestion tool never talk to each other. Both lean on the same rules, so they cannot disagree on what a number means. A new brand adds one box in the middle.</p></section>
+
+<footer>Source: ARCHITECTURE-SPINE.md. Written 2026-10-11.</footer>
+
+</main>

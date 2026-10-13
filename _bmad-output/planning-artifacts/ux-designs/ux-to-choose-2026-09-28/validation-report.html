@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX Design Validation: Fit my Ride</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+
+    --resolved: #16a34a;
+    --noted: #78716c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+
+  .findings-list { padding: 0 20px 4px; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
+  .badge-resolved { background: rgba(22, 163, 74, 0.14); color: var(--resolved); }
+  .badge-noted { background: rgba(120, 113, 108, 0.14); color: var(--noted); }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .reviewer-source {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="title">
+        <h1>Fit my Ride — UX Design Validation Report</h1>
+        <div class="subtitle">DESIGN.md + EXPERIENCE.md · _bmad-output/planning-artifacts/ux-designs/ux-to-choose-2026-09-28/</div>
+      </div>
+    </header>
+
+    <div class="synthesis">
+      <p><strong>This report documents findings as originally raised, each now marked with its resolution status.</strong> Two reviewers ran in parallel against the finalized spine pair: the rubric walker (structural/mechanical coverage against the BMad DESIGN.md/EXPERIENCE.md spec) and an ad-hoc accessibility reviewer (dispatched because the product has an explicit colorblind-safety requirement). Neither reviewer re-ran after fixes landed — findings below are followed by what was actually done, not a re-graded verdict.</p>
+      <p><strong>Rubric walker:</strong> a well-executed fast-path spine pair — canonical shapes followed exactly, every token resolves, both PRD journeys have full Key Flows with climax and failure paths. Gaps were narrow and concrete: two components with behavior but no visual spec, one broken cross-reference, one worked mock never linked. 11 findings (0 critical, 3 high, 3 medium, 5 low) — <strong>all 11 resolved</strong> in this pass.</p>
+      <p><strong>Accessibility:</strong> the colorblind-safety approach was structurally sound (blue↔orange scale, not red/green; glyph+number+color triple redundancy) but two real gaps needed fixing: the focus ring failed contrast against most heat-tier fills despite the spine's own claim otherwise, and the Geometry Diagram had no accessible text alternative. 10 findings (0 critical, 2 high, 5 medium, 3 low) — <strong>9 of 10 resolved</strong>; one low-severity item (thin contrast margin on one heat-tier's text) was acknowledged and flagged for a post-build re-check rather than changed, to avoid tuning a color on an untested assumption about anti-aliased rendering.</p>
+      <p>A subsequent editorial pass (structure + prose lenses, `bmad-review`) found the accessibility fixes had introduced real redundancy — the same rationale restated 2–3 times across sections — plus 23 sentence-level issues (grammar, terminology consistency, a genuine column-count arithmetic error). All structure findings and all clear-cut prose fixes were applied; sentence-style heading capitalization (Microsoft Writing Style Guide) was flagged but not applied — a ~20-heading rename judged out of proportion for a hobby-project spine, noted here rather than silently skipped.</p>
+    </div>
+
+    <div class="dimension-summary">
+      <div class="dim-card"><div class="dim-name">1. Flow coverage</div><div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div></div>
+      <div class="dim-card"><div class="dim-name">2. Token completeness</div><div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div></div>
+      <div class="dim-card"><div class="dim-name">3. Component coverage</div><div class="dim-verdict" style="color: var(--verdict-thin)">Thin (as reviewed)</div></div>
+      <div class="dim-card"><div class="dim-name">4. State coverage</div><div class="dim-verdict" style="color: var(--verdict-adequate)">Adequate</div></div>
+      <div class="dim-card"><div class="dim-name">5. Visual reference coverage</div><div class="dim-verdict" style="color: var(--verdict-adequate)">Adequate (as reviewed)</div></div>
+      <div class="dim-card"><div class="dim-name">6. Bloat &amp; overspecification</div><div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div></div>
+      <div class="dim-card"><div class="dim-name">7. Inheritance discipline</div><div class="dim-verdict" style="color: var(--verdict-adequate)">Adequate (as reviewed)</div></div>
+      <div class="dim-card"><div class="dim-name">8. Shape fit</div><div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div></div>
+    </div>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>1. Flow coverage</h2><span class="verdict-pill verdict-strong">Strong</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>UJ-1 → Flow 1 (desktop) and Flow 2 (phone/imperial); UJ-2 → Flow 3 (CLI review). All three have a named protagonist, numbered steps, a bolded Climax, and a Failure line. All 7 FRs traceable into a flow, state row, or the Builder Review section.</p></div></div>
+        <div class="findings-list"><p style="padding:0 0 12px;color:var(--muted);font-size:13.5px;">No findings.</p></div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>2. Token completeness</h2><span class="verdict-pill verdict-strong">Strong</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>All 23+ color tokens have hex values with heat-tier `-text` companions. Contrast targets stated for the load-bearing combination. Every token reference in both files resolves.</p></div></div>
+        <div class="findings-list"><p style="padding:0 0 12px;color:var(--muted);font-size:13.5px;">No findings (see Mechanical notes for a non-blocking observation about the <code>fontFeature</code> key).</p></div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details open>
+        <summary><h2>3. Component coverage</h2><span class="verdict-pill verdict-thin">Thin (as reviewed)</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>Two frequently-used interactive elements had behavior specs but no visual specs; two visual specs had no matching behavior rows.</p></div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-high">High</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Cell detail popover / phone bottom sheet had no DESIGN.md visual spec</h3><span class="finding-location">DESIGN.md § Components</span></header>
+            <div class="finding-note">Repeatedly cited in EXPERIENCE.md (Heat cell, State Patterns, Interaction Primitives, Responsive & Platform, Key Flow 2's climax) but no background/border/radius/typography was specified anywhere.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added <code>popover</code> and <code>bottom-sheet</code> component tokens and a matching § Components bullet.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">High</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Show-excluded toggle had no DESIGN.md component entry</h3><span class="finding-location">DESIGN.md § Components</span></header>
+            <div class="finding-note">Its sibling <code>unit-toggle</code> had both a token and a bullet; this one had neither.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added <code>show-excluded-toggle</code> and <code>excluded-row-badge</code> tokens plus bullets — the badge addition also closes an accessibility finding (row marking must not be color/opacity-only).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">In-Range Count cell had a visual spec but no Component Patterns row</h3><span class="finding-location">EXPERIENCE.md § Component Patterns</span></header>
+            <div class="finding-note">Behavior was scattered across IA, Sorting, and State Patterns instead of getting its own row.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added a Component Patterns row with pointers to where its full behavior lives.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Bike cell had a visual spec but no Component Patterns row</h3><span class="finding-location">EXPERIENCE.md § Component Patterns</span></header>
+            <div class="finding-note">Pinning behavior was stated only in DESIGN.md's own layout section and in Responsive & Platform.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added a Component Patterns row.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Unknown cell's behavior filed under State Patterns, not Component Patterns</h3><span class="finding-location">EXPERIENCE.md</span></header>
+            <div class="finding-note">Content existed, just under a heading that didn't match its DESIGN.md counterpart's name.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added an explicit "Unknown / not-evaluated cell" Component Patterns row cross-referencing the State Patterns rows.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>4. State coverage</h2><span class="verdict-pill verdict-adequate">Adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>Form and Results states both fully covered (empty, cold-load, error, offline, no-results, long-catalog, etc.). Permission-denied correctly omitted (no accounts in v1).</p></div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-high">High</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Broken cross-reference: "(see Column states)" pointed to a section that doesn't exist</h3><span class="finding-location">EXPERIENCE.md § Information Architecture</span></header>
+            <div class="finding-note">Nearest actual content was the "Not-evaluated column" / "Unknown cell" rows under State Patterns.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> pointer now names the actual rows directly.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">No explicit Focus row in State Patterns</h3><span class="finding-location">EXPERIENCE.md § State Patterns</span></header>
+            <div class="finding-note">Focus behavior existed only in prose in Accessibility Floor; the example spines carry a dedicated row.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added a Focus row — became more load-bearing than originally optional once the focus-halo mechanism was introduced fixing the accessibility contrast finding below.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>5. Visual reference coverage</h2><span class="verdict-pill verdict-adequate">Adequate (as reviewed)</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>Both imports were linked inline correctly with spines-win-on-conflict stated once. The one worked mock was not.</p></div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Results mock existed, matched the spines, but was never linked from either spine</h3><span class="finding-location">.working/key-results-desktop.html</span></header>
+            <div class="finding-note">A reader of the spines alone had no way to discover it.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> promoted both mocks (Results, and the subsequently-rendered Form mock) to <code>mockups/</code> and added a <code>→ Composition reference:</code> line to § Information Architecture.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>6. Bloat &amp; overspecification</h2><span class="verdict-pill verdict-strong">Strong</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>No pixel values duplicating tokens. Key Flow climaxes tie to real decisions/FRs, not decorative color. Scope-boundary restatement cites PRD sections rather than reproducing FR text.</p></div></div>
+        <div class="findings-list"><p style="padding:0 0 12px;color:var(--muted);font-size:13.5px;">No findings. (A later editorial pass found redundancy introduced <em>by</em> the accessibility fixes — see the Structure/Prose note below, resolved separately.)</p></div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>7. Inheritance discipline</h2><span class="verdict-pill verdict-adequate">Adequate (as reviewed)</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p><code>sources</code> frontmatter resolves; FRs cited verbatim throughout; glossary terms used consistently.</p></div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Key Flows never cited "UJ-1"/"UJ-2" by name</h3><span class="finding-location">EXPERIENCE.md § Key Flows</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> added "realizes UJ-1"/"realizes UJ-2" to each flow header, mirroring the PRD's own phrasing.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">"Bike column" capitalized inconsistently</h3><span class="finding-location">DESIGN.md</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> capitalized consistently as a proper component name throughout.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">PRD glossary term "Ingestion Pipeline" never used verbatim</h3><span class="finding-location">EXPERIENCE.md § Builder Review (CLI)</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> used verbatim once, in the section's opening sentence.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>8. Shape fit</h2><span class="verdict-pill verdict-strong">Strong</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>DESIGN.md has all 8 canonical sections in exact order. EXPERIENCE.md has all required defaults plus both required-when-applicable sections (Inspiration &amp; Anti-patterns, Responsive &amp; Platform). Invented sections (Builder Review, Open Items) earn their place.</p></div></div>
+        <div class="findings-list"><p style="padding:0 0 12px;color:var(--muted);font-size:13.5px;">No findings.</p></div>
+      </details>
+    </section>
+
+    <section class="reviewer-section">
+      <details open>
+        <summary><h2>Accessibility review</h2><span class="reviewer-source">review-accessibility.md</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>Structural bet was right (blue↔orange, not red/green; triple-redundant encoding; explicit "never color alone" rule). Two real gaps needed fixing before build.</p></div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-high">High</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Focus ring not visible against most heat-tier fills, contradicting the spine's own claim</h3><span class="finding-location">focus-ring vs. 4 of 5 heat fills, computed: 1.10–2.02:1 (fail), 3.14:1 (thin pass)</span></header>
+            <div class="finding-note">EXPERIENCE.md claimed the ring "stays visible against every fill" — the numbers said otherwise.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> replaced the single ring on heat cells with a two-tone halo (inner ring in <code>background</code>, outer ring in <code>focus-ring</code>) — verified against all 5 fills regardless of which sits underneath. New <code>focus-halo-inner</code>/<code>focus-halo-outer</code> tokens; single ring kept for every other control (already high-contrast there).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">High</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Geometry Diagram had no accessible text alternative (WCAG 1.1.1)</h3><span class="finding-location">Inlined SVG, no title/desc/role/aria-label</span></header>
+            <div class="finding-note">The diagram's real job — which line is which parameter — is a purely spatial answer a screen-reader user got zero equivalent of.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> added <code>role="img"</code> + summary <code>aria-label</code> to the mock's inlined SVG; documented as an explicit spine decision in Accessibility Floor (column headers' full names are the treated-as-sufficient substitute for the spatial mapping, not an oversight).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Colorblind-simulation claim asserted, not evidenced</h3><span class="finding-location">DESIGN.md "ΔE ≥ 27" — no simulation output existed anywhere in the workspace</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> re-ran the CVD simulation (Machado et al. 2009 matrices) and saved method + full results to <code>.working/heat-scale-cvd-check.md</code>. The real worst-case figure is <strong>ΔE ≈ 23</strong>, not 27 — DESIGN.md's claim was corrected to match the evidence rather than kept as a rounder, unverified number.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title"><code>cell-unknown-border</code> fails non-text contrast against its own background</h3><span class="finding-location">#4A4760 vs. surface #1E1D27 ≈ 1.87:1 (needs 3:1)</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> lightened to <code>#726F8A</code> (≈3.5:1, computed).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Heat-cell glyph fill/outline pairs hard to perceive at small size (low-vision, not just colorblind)</h3><span class="finding-location">10px glyph next to 13px value</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> glyph now renders at the same size as the value (one of the two fixes the reviewer offered).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Show-excluded toggle's row-marking mechanism not specified as non-color</h3><span class="finding-location">EXPERIENCE.md — "visibly marked" left undefined</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> specified an explicit text badge ("Excluded — outside your range"), matching the rigor already applied to unknown-cell and error states.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Native table semantics and arrow-key navigation promised without reconciling</h3><span class="finding-location">EXPERIENCE.md — plain <code>&lt;table&gt;</code> doesn't support arrow-key cell focus on its own</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> named the ARIA <code>grid</code> pattern explicitly as the implementation target in Accessibility Floor.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-noted">Noted — not changed</span><h3 class="finding-title">heat-too-short-text passes 4.5:1 by under 3% headroom</h3><span class="finding-location">#FFFFFF on #3D6FE0 ≈ 4.62:1</span></header>
+            <div class="finding-note">Technically passes; thinnest margin of the five tiers.</div>
+            <div class="finding-fix"><strong>Decision:</strong> left as-is rather than darkening the fill on an untested assumption — DESIGN.md now explicitly flags it for re-verification against real anti-aliased rendering once built, per the reviewer's own suggested fix.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Accessible-name pattern omitted the "distance from range" shown in the visual popover</h3><span class="finding-location">EXPERIENCE.md § Accessibility Floor</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> folded into the example: "…slightly long, 0.4 centimeters above your range of 38.5 to 40.0."</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">No accessible-name pattern given for unknown/not-evaluated cells</h3><span class="finding-location">EXPERIENCE.md § Accessibility Floor</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> added worked examples reusing the popover copy already specified in State Patterns.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="reviewer-section">
+      <details>
+        <summary><h2>Editorial: structure + prose (doc_standards, not opt-in)</h2><span class="reviewer-source">bmad-review lenses=structure,prose</span></summary>
+        <div class="dim-body"><div class="dim-judgment"><p>Run automatically as part of Finalize's polish step, not the opt-in Reviewer Gate. Structure lens found the accessibility fixes above had introduced real redundancy (the same rationale restated 2–3 times per document); prose lens found 23 sentence-level issues including one genuine arithmetic error.</p></div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Focus-halo rationale restated 3× in DESIGN.md, 2× in EXPERIENCE.md</h3><span class="finding-location">heat-cell YAML comment, § Colors, § Components; State Patterns Focus row, Accessibility Floor</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> full derivation kept once (DESIGN.md § Colors; EXPERIENCE.md § Accessibility Floor), other locations trimmed to pointers.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">Medium</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">CVD numbers and Geometry Diagram provenance each restated verbatim in a second place</h3><span class="finding-location">EXPERIENCE.md § Accessibility Floor; Component Patterns "Geometry Diagram" row</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> both trimmed to pointers into their owning sections (DESIGN.md § Colors; Inspiration &amp; Anti-patterns).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">High</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Column-count arithmetic error</h3><span class="finding-location">EXPERIENCE.md § Responsive &amp; Platform</span></header>
+            <div class="finding-note">"15 data columns... plus the pinned Bike column" double-counted Bike against the 15-column total established in § Information Architecture.</div>
+            <div class="finding-fix"><strong>Fix applied:</strong> corrected to "14 data columns... plus the pinned Bike column — 15 columns total."</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Grammar/clarity: parallelism, dangling references, double negatives, mixed predicates</h3><span class="finding-location">DESIGN.md § Colors, § Components; EXPERIENCE.md § Foundation, § Accessibility Floor, Key Flow 1</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> all flagged instances corrected (6 grammar fixes, 4 clarity/sentence-length fixes).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-resolved">Resolved</span><h3 class="finding-title">Terminology/capitalization inconsistency across ~15 instances</h3><span class="finding-location">Edit/edit, Submit/submit, Show-excluded toggle variants, Bike column variants, On phone/On phones, serial comma, "e.g." vs. "for example"</span></header>
+            <div class="finding-fix"><strong>Fix applied:</strong> standardized throughout both files.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">Low</span><span class="badge badge-noted">Noted — not changed</span><h3 class="finding-title">Headings use title case; MSTG specifies sentence case</h3><span class="finding-location">~20 headings across both files</span></header>
+            <div class="finding-fix"><strong>Decision:</strong> flagged by the reviewer itself as lowest priority — a ~20-heading rename judged out of proportion for a hobby-project spine. Left as-is rather than silently dropped.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <div class="mechanical">
+      <h3>Mechanical notes</h3>
+      <ul>
+        <li><strong>Resolved:</strong> stray <code>imports/BikeGeometry.svg:Zone.Identifier</code> sidecar file (Windows download metadata) deleted.</li>
+        <li><strong>Not changed (non-blocking):</strong> DESIGN.md's <code>numeric</code>/<code>numeric-lg</code> typography tokens include a <code>fontFeature: 'tnum'</code> key outside <code>design-md-spec.md</code>'s documented subset — a reasonable, resolvable extension (CSS <code>font-feature-settings</code> for tabular figures), flagged for awareness only.</li>
+        <li>No Mermaid diagrams in either file (N/A). Frontmatter complete in both files; all <code>sources</code> paths resolve.</li>
+      </ul>
+    </div>
+
+    <footer class="report-footer">
+      <div class="meta">
+        <span>Rubric: review-rubric.md</span>
+        <span>Accessibility: review-accessibility.md</span>
+        <span>Generated: 2026-09-28</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

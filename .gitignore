@@ -1,0 +1,45 @@
+# Secrets / local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Dependencies / build output (stack not chosen yet — common ones)
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Agent tooling (local state)
+.claude/settings.local.json
+.claude/worktrees/
+graphify-out/
+
+# BMad: installer-generated (reinstall to restore) and personal config
+.claude/skills/
+_bmad/config.user.toml
+
+# BMad working state (agent scratch, not deliverables)
+_bmad-output/**/.memlog.md
+_bmad-output/**/.working/
+
+# Stray local file
+/cotes

@@ -1,0 +1,72 @@
+<title>Fit my Ride at a Glance</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: single readable column, plain-language guide for a non-technical reader. Diverging teal/amber echoes the heatmap itself. */
+:root{--bg:#f6f7f5;--surface:#ffffff;--ink:#1d2a2c;--muted:#56666a;--line:#d9dfdc;--accent:#0d6f73;--accent-soft:#dcefee;--warm:#b4570f;--warm-soft:#fbe8d5;--display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--body:'Instrument Sans','Segoe UI',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111a1b;--surface:#182526;--ink:#e6eeec;--muted:#9fb0ad;--line:#2b3b3c;--accent:#58c4c6;--accent-soft:#17393a;--warm:#f0a05c;--warm-soft:#3a2713;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111a1b;--surface:#182526;--ink:#e6eeec;--muted:#9fb0ad;--line:#2b3b3c;--accent:#58c4c6;--accent-soft:#17393a;--warm:#f0a05c;--warm-soft:#3a2713;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:20px;padding-block:32px}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:2.1rem}h2{font-size:1.4rem}h3{font-size:1.1rem}
+p{margin:0}p+p{margin-top:.8em}
+.lede{font-size:1.15rem;color:var(--muted)}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+section{display:flex;flex-direction:column;gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.grid>*{min-width:0}
+.tag{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.tag.warm{background:var(--warm-soft);color:var(--warm)}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+dl{margin:0;display:flex;flex-direction:column;gap:10px}dt{font-weight:600}dd{margin:0;color:var(--muted)}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto}
+.call{border-left:4px solid var(--warm);padding:8px 14px;background:var(--warm-soft);border-radius:0 8px 8px 0}
+footer{color:var(--muted);font-size:.85rem}
+</style>
+
+<main>
+
+<header><div class="eyebrow">One-pager · for Fit my Ride's two builders</div>
+<h1>Fit my Ride: will this bike fit my body?</h1>
+<p class="lede">A small web app you open on your phone or laptop. You type three things about yourself, and it shows how well each bike's frame suits you, bike by bike, colour by colour.</p></header>
+
+<section><h2>The one question it answers</h2>
+<p>Bike websites tell you the frame material and the components. They don't tell you whether the frame suits your body. Fit my Ride answers only that, with no shop map, no marketplace and no accounts in the first version.</p></section>
+
+<section><h2>How it works, in three steps</h2>
+<div class="grid">
+<div class="box"><h3>1. You enter</h3><p>Your height, your cycling inseam (leg length) and what kind of riding you do.</p></div>
+<div class="box"><h3>2. It compares</h3><p>It checks each bike's frame measurements against what suits your body.</p></div>
+<div class="box"><h3>3. You read the colours</h3><p>A table: one row per bike, one column per measurement. Colour shows too short, ideal or too long. Grey means "we can't say".</p></div>
+</div></section>
+
+<section><h2>The five frame measurements we show</h2>
+<dl>
+<dt>Stack (S)</dt><dd>How tall the front of the frame is, from the pedals' axle up to the handlebar area.</dd>
+<dt>Reach (R)</dt><dd>How far forward the front of the frame sits.</dd>
+<dt>Head tube angle (HTA)</dt><dd>How steep the front fork is. It changes how the bike steers.</dd>
+<dt>Seat tube angle (STA)</dt><dd>How steep the tube under the saddle is.</dd>
+<dt>Bottom bracket drop (BB)</dt><dd>How far the pedals' axle sits below the wheel axles.</dd>
+</dl>
+<p>Every bike from every brand must supply all five. We call them the <strong>Core Parameters</strong>. Seven more are stored when the brand publishes them, but not shown yet.</p></section>
+
+<section><h2>Where the data comes from</h2>
+<p>The brands publish their frame measurements in PDF documents. We read those PDFs with the help of an AI model, then <strong>a human checks and approves every line</strong> before anything is saved. The AI is used only at that step. It is never involved when someone uses the app, so it cannot invent a number on a rider's screen.</p>
+<p>The first two brands are KTM and Van Rysel.</p></section>
+
+<section><h2>What we decided, in plain words</h2>
+<ul>
+<li><strong>One program, not two.</strong> One codebase written in Python (Baptiste's language), run in one container on the home server.</li>
+<li><strong>One small module per brand.</strong> Adding a third brand means writing one new module, and nothing else changes.</li>
+<li><strong>Approved data is kept as plain files in the project.</strong> You can see exactly what changed each time a brand is re-read.</li>
+<li><strong>Nothing about riders is stored.</strong> Your measurements live in the web address and your own browser.</li>
+<li><strong>A bike with a missing core measurement is held back</strong> until the problem is fixed, so a gap never looks like an answer.</li>
+</ul></section>
+
+<section><h2>What is not decided yet</h2>
+<div class="call"><p><strong>How each measurement is judged.</strong> For stack and reach there are reasonable rules of thumb linking height and leg length to a good range. For the three angles and the bottom bracket there isn't an obvious link yet. Until this is decided, every cell stays grey. It is the first job in the build.</p></div></section>
+
+<footer>Source of truth: ARCHITECTURE-SPINE.md and docs/prd.md. Written 2026-10-11.</footer>
+
+</main>

@@ -1,0 +1,97 @@
+<title>Fit my Ride Walkthrough</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: single readable column, plain-language guide for a non-technical reader. Diverging teal/amber echoes the heatmap itself. */
+:root{--bg:#f6f7f5;--surface:#ffffff;--ink:#1d2a2c;--muted:#56666a;--line:#d9dfdc;--accent:#0d6f73;--accent-soft:#dcefee;--warm:#b4570f;--warm-soft:#fbe8d5;--display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--body:'Instrument Sans','Segoe UI',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111a1b;--surface:#182526;--ink:#e6eeec;--muted:#9fb0ad;--line:#2b3b3c;--accent:#58c4c6;--accent-soft:#17393a;--warm:#f0a05c;--warm-soft:#3a2713;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111a1b;--surface:#182526;--ink:#e6eeec;--muted:#9fb0ad;--line:#2b3b3c;--accent:#58c4c6;--accent-soft:#17393a;--warm:#f0a05c;--warm-soft:#3a2713;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:20px;padding-block:32px}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:2.1rem}h2{font-size:1.4rem}h3{font-size:1.1rem}
+p{margin:0}p+p{margin-top:.8em}
+.lede{font-size:1.15rem;color:var(--muted)}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+section{display:flex;flex-direction:column;gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.grid>*{min-width:0}
+.tag{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.tag.warm{background:var(--warm-soft);color:var(--warm)}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+dl{margin:0;display:flex;flex-direction:column;gap:10px}dt{font-weight:600}dd{margin:0;color:var(--muted)}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto}
+.call{border-left:4px solid var(--warm);padding:8px 14px;background:var(--warm-soft);border-radius:0 8px 8px 0}
+footer{color:var(--muted);font-size:.85rem}
+</style>
+
+<main>
+
+<header><div class="eyebrow">Walkthrough · plain-language guide</div>
+<h1>How Fit my Ride works, from a rider's tap to a bike's data</h1>
+<p class="lede">No technical background needed. This explains what the system does, why it is built this way, and which decisions are still ours to make.</p></header>
+
+<section><h2>The two stories</h2>
+<p>The whole product is two stories. One is a rider checking a bike. The other is one of us adding a brand's bikes. Everything else supports these.</p></section>
+
+<section><h2>Story 1. A rider checks a bike</h2>
+<ol>
+<li><strong>You open the app</strong> (on a phone it can be installed like an app) and enter height, cycling inseam and riding style.</li>
+<li><strong>The app looks up the saved bikes.</strong> Each bike comes in several frame sizes. For each bike the app picks the size that suits you best, so you see one row per bike.</li>
+<li><strong>Each of the five measurements is compared to your ideal range.</strong> The cell is coloured on a scale: too short, ideal, too long.</li>
+<li><strong>You sort</strong> by any column, or by how many measurements are in range.</li>
+</ol>
+<div class="box"><p><strong>Nothing about you is saved on the server.</strong> Your numbers travel in the page address, so you can bookmark or share a link. There are no accounts and no profiles.</p></div>
+<div class="box"><p><strong>Grey cells.</strong> A grey cell means we have no way to judge that measurement for you, not that it is bad. At the moment every cell is grey, because the judging rules haven't been written.</p></div>
+</section>
+
+<section><h2>Story 2. Adding a brand's bikes</h2>
+<ol>
+<li><strong>Start with the brand's PDF</strong> of frame measurements.</li>
+<li><strong>A small module for that brand reads it.</strong> Each brand lays out its PDF differently and names things differently ("Stack", "Frame height"...). Each module knows its own brand.</li>
+<li><strong>An AI model helps read the tables.</strong> Its answer is checked against a fixed format, and anything unreadable is flagged.</li>
+<li><strong>Names and units are translated</strong> into our standard ones. Our standard is Van Rysel's naming. Lengths are in centimetres and angles in degrees.</li>
+<li><strong>If two sources disagree</strong>, a fixed rule decides: an official brand source beats an unofficial one, and the most recent official one wins.</li>
+<li><strong>A person reviews everything.</strong> A summary lists every value, its source and any conflict. You approve or abort. Nothing is saved before you approve.</li>
+<li><strong>Approved data is saved as plain files in the project.</strong> The app's database is rebuilt from those files.</li>
+</ol>
+<div class="call"><p><strong>Rule:</strong> a bike that lacks any of its five core measurements is not saved. The review lists it, and the rest of the batch can still go through.</p></div>
+</section>
+
+<section><h2>Where the AI is, and isn't</h2>
+<div class="grid">
+<div class="box"><span class="tag">Used</span><p>Only to read a brand's PDF while one of us is adding or refreshing that brand, on that person's own computer.</p></div>
+<div class="box"><span class="tag warm">Never used</span><p>When a rider uses the app, when judging fit, when settling conflicts, or in the review. Those are fixed rules or a human.</p></div>
+</div>
+<p>Consequences: no AI cost when people use the app, and the server never holds an AI key.</p></section>
+
+<section><h2>The rules that keep two builders and several AI coding agents in step</h2>
+<ul>
+<li><strong>The meaning of things is written once.</strong> What "in range" means, what a unit is and how a conflict is settled each live in one place, used by both the app and the data side.</li>
+<li><strong>The app only reads data.</strong> Only the approved-file path can change what bikes exist.</li>
+<li><strong>Each brand is its own module</strong> with the same shape, so a new brand cannot break the others.</li>
+<li><strong>Same checks everywhere.</strong> A formatter and the tests run on each of our computers and on GitHub, in identical form.</li>
+<li><strong>Access is handled in front of the app.</strong> Your existing sign-in (Authentik) and HTTPS protect it; the app itself has no accounts.</li>
+</ul></section>
+
+<section><h2>Where it runs</h2>
+<p>On the home server, in one container. Bike data goes in as files from the project and the app opens them read-only. If the server is lost, rebuilding means pulling the project and starting the container. Nothing lives only on the server.</p></section>
+
+<section><h2>Decisions that are open</h2>
+<dl>
+<dt>How each measurement is judged</dt><dd>The first job in the build. It needs bike-fit knowledge, not programming. This is where your input matters most.</dd>
+<dt>Which AI service reads the PDFs</dt><dd>Claude or OpenAI. We'll try both on the real KTM and Van Rysel pages and keep the one that reads the tables best.</dd>
+<dt>Other seven measurements</dt><dd>Stored when available, not shown yet. Showing them later is a display change only.</dd>
+</dl></section>
+
+<section><h2>Words you may hear</h2>
+<dl>
+<dt>PWA</dt><dd>A website that can be installed on a phone like an app.</dd>
+<dt>Adapter</dt><dd>The small per-brand module that reads that brand's PDF.</dd>
+<dt>Container / Docker</dt><dd>A sealed box that holds the app so it runs the same everywhere.</dd>
+<dt>CI</dt><dd>Automatic checks that run on GitHub each time code changes.</dd>
+<dt>Provenance</dt><dd>Where a number came from and when.</dd>
+</dl></section>
+<footer>Source: ARCHITECTURE-SPINE.md (AD-1 to AD-12). Written 2026-10-11.</footer>
+
+</main>

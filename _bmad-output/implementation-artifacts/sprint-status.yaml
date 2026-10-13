@@ -1,0 +1,91 @@
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when its first story starts (via build's sprint sync)
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates the next story after the previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; the status view surfaces open ones
+generated: 10-11-2026 13:24
+last_updated: 10-11-2026 13:24
+project: to-choose
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+development_status:
+  epic-1: backlog
+  1-1-project-scaffold-with-one-quality-gate: backlog
+  1-2-canonical-schema-and-units: backlog
+  1-3-rider-input-and-the-evaluator-seam: backlog
+  1-4-stack-and-reach-evaluators: backlog
+  1-5-decide-hta-sta-and-bb: backlog
+  1-6-fit-results-exclusion-and-ordering: backlog
+  1-7-try-a-rider-against-fixture-bikes-from-the-cli: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-adapter-contract-and-approved-file-format: backlog
+  2-2-llm-helper-behind-one-provider-neutral-interface: backlog
+  2-3-provider-spike-on-van-rysel-pages: backlog
+  2-4-van-rysel-adapter: backlog
+  2-5-provenance-arbitration: backlog
+  2-6-idempotent-staged-ingestion-command: backlog
+  2-7-review-gate-and-report: backlog
+  2-8-catalog-loader: backlog
+  2-9-ingest-the-full-van-rysel-catalog: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-probe-ktm-s-pdfs-against-the-contract: backlog
+  3-2-ktm-synonym-map-units-and-taxonomy-mapping: backlog
+  3-3-ktm-adapter: backlog
+  3-4-ingest-the-full-ktm-catalog: backlog
+  3-5-document-how-to-add-a-vendor: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-web-shell-serving-the-fit-page-from-the-catalog: backlog
+  4-2-rider-form-with-unit-toggle-and-style-select: backlog
+  4-3-heatmap-table-with-heat-cells-and-unknown-states: backlog
+  4-4-cell-detail-popover-and-bottom-sheet: backlog
+  4-5-sorting-and-column-headers: backlog
+  4-6-legend-count-line-and-show-excluded-toggle: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-summary-bar-remembered-values-and-clear: backlog
+  5-2-geometry-diagram: backlog
+  5-3-keyboard-and-screen-reader-support-for-the-table: backlog
+  5-4-computing-empty-and-failure-states: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-container-image-with-the-catalog-built-in: backlog
+  6-2-deploy-behind-the-existing-proxy-and-authentik: backlog
+  6-3-installable-pwa-manifest: backlog
+  6-4-offline-shell-without-stale-results: backlog
+  6-5-phone-and-tablet-layouts: backlog
+  6-6-rebuild-from-a-clean-machine: backlog
+  epic-6-retrospective: optional

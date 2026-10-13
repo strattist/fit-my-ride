@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bike Selection Platform — Brainstorm Keepsake</title>
+<style>
+/* ============================================================
+   TOKENS — light default, dark via prefers-color-scheme + manual toggle
+   ============================================================ */
+:root{
+  --bg:#f6f4ee;
+  --bg-alt:#eef1e7;
+  --paper:#ffffff;
+  --ink:#20242c;
+  --muted:#5b6270;
+  --line:#dcd7c8;
+  --line-strong:#c7c0ac;
+  --user:#1668a8;
+  --user-bg:#e7f1fb;
+  --coach:#bd6408;
+  --coach-bg:#fdf0dc;
+  --decision-bg:#fff1b8;
+  --decision-ink:#6b4f00;
+  --insight:#7c3aed;
+  --insight-bg:#f1eaff;
+  --question-bg:#eceef1;
+  --question-ink:#3a3f4a;
+  --must:#b5372a;
+  --must-bg:#fbe4e1;
+  --should:#c9740f;
+  --should-bg:#fbead2;
+  --could:#1668a8;
+  --could-bg:#e5f0fb;
+  --wont:#6b7078;
+  --wont-bg:#eceef0;
+  --heat-cold:#2f6fb0;
+  --heat-ideal:#2f9e52;
+  --heat-warm:#d99b2b;
+  --heat-hot:#c9463b;
+  --gold:#9c6d13;
+  --shadow: 0 1px 3px rgba(20,20,10,.08), 0 8px 24px -12px rgba(20,20,10,.18);
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#11141b;
+    --bg-alt:#161a23;
+    --paper:#1b1f29;
+    --ink:#eae8e1;
+    --muted:#9aa1ad;
+    --line:#2b2f3b;
+    --line-strong:#3a3f4d;
+    --user:#63aeef;
+    --user-bg:#132434;
+    --coach:#f0aa63;
+    --coach-bg:#2b2013;
+    --decision-bg:#3c2f0c;
+    --decision-ink:#f3d27a;
+    --insight:#c3a0ff;
+    --insight-bg:#241c33;
+    --question-bg:#232833;
+    --question-ink:#c7ccd6;
+    --must:#e6897c;
+    --must-bg:#3a1e1c;
+    --should:#f0b15c;
+    --should-bg:#3a2b10;
+    --could:#63aeef;
+    --could-bg:#132434;
+    --wont:#8f95a0;
+    --wont-bg:#20242c;
+    --heat-cold:#63aeef;
+    --heat-ideal:#5bce8b;
+    --heat-warm:#f0b15c;
+    --heat-hot:#e6786a;
+    --gold:#e6c15a;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141b; --bg-alt:#161a23; --paper:#1b1f29; --ink:#eae8e1; --muted:#9aa1ad;
+  --line:#2b2f3b; --line-strong:#3a3f4d; --user:#63aeef; --user-bg:#132434;
+  --coach:#f0aa63; --coach-bg:#2b2013; --decision-bg:#3c2f0c; --decision-ink:#f3d27a;
+  --insight:#c3a0ff; --insight-bg:#241c33; --question-bg:#232833; --question-ink:#c7ccd6;
+  --must:#e6897c; --must-bg:#3a1e1c; --should:#f0b15c; --should-bg:#3a2b10;
+  --could:#63aeef; --could-bg:#132434; --wont:#8f95a0; --wont-bg:#20242c;
+  --heat-cold:#63aeef; --heat-ideal:#5bce8b; --heat-warm:#f0b15c; --heat-hot:#e6786a; --gold:#e6c15a;
+  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+:root[data-theme="light"]{
+  --bg:#f6f4ee; --bg-alt:#eef1e7; --paper:#ffffff; --ink:#20242c; --muted:#5b6270;
+  --line:#dcd7c8; --line-strong:#c7c0ac; --user:#1668a8; --user-bg:#e7f1fb;
+  --coach:#bd6408; --coach-bg:#fdf0dc; --decision-bg:#fff1b8; --decision-ink:#6b4f00;
+  --insight:#7c3aed; --insight-bg:#f1eaff; --question-bg:#eceef1; --question-ink:#3a3f4a;
+  --must:#b5372a; --must-bg:#fbe4e1; --should:#c9740f; --should-bg:#fbead2;
+  --could:#1668a8; --could-bg:#e5f0fb; --wont:#6b7078; --wont-bg:#eceef0;
+  --heat-cold:#2f6fb0; --heat-ideal:#2f9e52; --heat-warm:#d99b2b; --heat-hot:#c9463b; --gold:#9c6d13;
+  --shadow: 0 1px 3px rgba(20,20,10,.08), 0 8px 24px -12px rgba(20,20,10,.18);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px);
+  background-size: 100% 42px;
+  background-attachment:local;
+}
+img,svg{max-width:100%;}
+a{color:inherit;}
+.wrap{max-width:920px; margin:0 auto; padding:0 20px;}
+h1,h2,h3{font-family:var(--sans); font-weight:800; letter-spacing:-.01em;}
+code,.mono{font-family:var(--mono);}
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+#theme-toggle{
+  position:fixed; top:14px; right:14px; z-index:50;
+  width:38px; height:38px; border-radius:50%;
+  border:1px solid var(--line-strong); background:var(--paper); color:var(--ink);
+  cursor:pointer; font-size:16px; box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:center;
+}
+#theme-toggle:hover{border-color:var(--user);}
+
+/* ============================================================
+   ROUTE NAV — sticky "ride route" of technique stops
+   ============================================================ */
+.route-nav{
+  position:sticky; top:0; z-index:40; background:var(--paper);
+  border-bottom:1px solid var(--line); box-shadow:var(--shadow);
+  overflow-x:auto; white-space:nowrap;
+}
+.route-nav-inner{
+  display:flex; align-items:center; gap:0; padding:10px 16px; min-width:max-content;
+}
+.route-nav a{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  text-decoration:none; color:var(--muted); font-size:10px; font-weight:700;
+  letter-spacing:.04em; padding:0 10px; position:relative;
+}
+.route-nav a .dot{
+  width:11px; height:11px; border-radius:50%; background:var(--paper);
+  border:2px solid var(--line-strong); transition:.2s;
+}
+.route-nav a:not(:last-child)::after{
+  content:""; position:absolute; top:5px; left:100%; width:22px; height:2px;
+  background:var(--line-strong);
+}
+.route-nav a.active .dot{background:var(--gold); border-color:var(--gold); box-shadow:0 0 0 4px color-mix(in srgb, var(--gold) 25%, transparent);}
+.route-nav a.active{color:var(--ink);}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:56px 0 34px; position:relative;}
+.hero-eyebrow{
+  font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.14em;
+  color:var(--muted); margin:0 0 10px;
+}
+.hero h1{font-size:clamp(28px,5vw,44px); margin:0 0 14px; line-height:1.08;}
+.hero h1 span{color:var(--user);}
+.hero p.lede{font-size:17px; color:var(--muted); max-width:60ch; margin:0 0 22px;}
+.hero-meta{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:34px;}
+.pill{
+  font-family:var(--mono); font-size:11.5px; padding:5px 11px; border-radius:999px;
+  background:var(--paper); border:1px solid var(--line-strong); color:var(--muted);
+}
+.pill b{color:var(--ink);}
+.pill.status{background:var(--could-bg); color:var(--could); border-color:transparent; font-weight:700;}
+
+/* geometry hero diagram */
+.geo-card{
+  background:var(--paper); border:1px solid var(--line); border-radius:16px;
+  padding:18px 18px 8px; box-shadow:var(--shadow); display:flex; gap:22px; align-items:center; flex-wrap:wrap;
+}
+.geo-card figure{margin:0; flex:0 0 auto;}
+.geo-card .geo-note{flex:1 1 220px; min-width:220px; font-size:13.5px; color:var(--muted);}
+.geo-note b{color:var(--ink);}
+figcaption{font-family:var(--mono); font-size:10.5px; color:var(--muted); text-align:center; margin-top:4px;}
+
+/* ============================================================
+   SECTION SCAFFOLD
+   ============================================================ */
+section.tech{padding:54px 0; border-top:1px dashed var(--line);}
+section.tech:nth-of-type(even){background:var(--bg-alt);}
+.sec-head{display:flex; gap:14px; align-items:flex-start; margin-bottom:8px;}
+.sec-badge{
+  flex:0 0 auto; width:46px; height:46px; border-radius:12px; display:flex; align-items:center;
+  justify-content:center; font-size:20px; font-weight:800; color:#fff; box-shadow:var(--shadow);
+}
+.sec-head h2{margin:0 0 4px; font-size:22px;}
+.sec-tag{font-family:var(--mono); font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em;}
+.sec-intro{color:var(--muted); max-width:66ch; margin:10px 0 26px; font-size:14.5px;}
+
+/* ============================================================
+   CHAT TRANSCRIPT — the two voices
+   ============================================================ */
+.transcript{display:flex; flex-direction:column; margin:18px 0;}
+.msg{
+  max-width:80%; margin:6px 0; padding:10px 14px; border-radius:14px;
+  font-size:13.6px; line-height:1.48; box-shadow:var(--shadow); position:relative;
+}
+.msg.user{background:var(--user-bg); margin-right:auto; border-bottom-left-radius:3px;}
+.msg.coach{background:var(--coach-bg); margin-left:auto; border-bottom-right-radius:3px; text-align:left;}
+.msg .who{
+  display:inline-flex; align-items:center; gap:5px; font-weight:800; font-size:10.5px;
+  letter-spacing:.09em; text-transform:uppercase; margin-bottom:3px;
+}
+.msg.user .who{color:var(--user);}
+.msg.coach .who{color:var(--coach);}
+.msg p{margin:0;}
+.tag{
+  font-size:9px; font-weight:800; padding:1.5px 7px; border-radius:7px; letter-spacing:.06em;
+  text-transform:uppercase; margin-left:2px;
+}
+.tag.idea{background:var(--could-bg); color:var(--could);}
+.tag.decision{background:var(--decision-bg); color:var(--decision-ink);}
+.tag.insight{background:var(--insight-bg); color:var(--insight);}
+.tag.question{background:var(--question-bg); color:var(--question-ink); border:1px dashed var(--muted);}
+.tag.direction{background:var(--wont-bg); color:var(--wont);}
+.msg.decision{outline:2px dashed var(--gold); outline-offset:2px;}
+
+.route-marker{
+  display:flex; align-items:center; gap:10px; margin:22px 0; color:var(--muted);
+  font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+}
+.route-marker::before, .route-marker::after{content:""; flex:1; height:1px; background:var(--line-strong);}
+
+/* ============================================================
+   MORPHOLOGICAL MATRIX
+   ============================================================ */
+.matrix{width:100%; border-collapse:collapse; margin:6px 0 26px; font-size:12.8px; background:var(--paper); box-shadow:var(--shadow); border-radius:10px; overflow:hidden;}
+.matrix th, .matrix td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top;}
+.matrix thead th{background:var(--bg-alt); font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em; font-size:10.5px; color:var(--muted);}
+.matrix tr:last-child td{border-bottom:none;}
+.matrix .opts{color:var(--muted);}
+.chip-pick{
+  display:inline-block; margin-top:5px; background:var(--gold); color:#221a05; font-weight:800;
+  font-size:11px; padding:2px 9px; border-radius:999px;
+}
+:root[data-theme="dark"] .chip-pick, :root:not([data-theme="light"]) .chip-pick{color:#1b1204;}
+@media (prefers-color-scheme:dark){.chip-pick{color:#1b1204;}}
+
+/* tape measure tiers */
+.tape{margin:20px 0 30px;}
+.tape-title{font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:.08em;}
+.tape-bar{display:flex; height:38px; border-radius:6px; overflow:hidden; border:1px solid var(--line-strong); box-shadow:var(--shadow);}
+.tape-seg{flex:1; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; position:relative; background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 1px, transparent 1px 8px);}
+.tape-seg span{background:rgba(0,0,0,.18); padding:2px 6px; border-radius:4px;}
+.tape-seg.t1{background:var(--must);}
+.tape-seg.t2{background:var(--should);}
+.tape-seg.t3{background:var(--could);}
+.tape-seg.t4{background:var(--wont);}
+.tape-legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; font-size:12px; color:var(--muted);}
+.tape-legend b{color:var(--ink);}
+
+/* heatmap demo */
+.heat-wrap{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px; box-shadow:var(--shadow); margin:22px 0 8px; overflow-x:auto;}
+.heat-cap{font-family:var(--mono); font-size:11px; color:var(--muted); margin:0 0 10px;}
+table.heat{border-collapse:collapse; width:100%; min-width:520px; font-size:12.5px;}
+table.heat th, table.heat td{padding:8px 10px; text-align:center;}
+table.heat th{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line);}
+table.heat td.bikename{text-align:left; font-weight:700; white-space:nowrap;}
+table.heat td.cell{color:#fff; font-weight:700; border-radius:6px;}
+.legend-scale{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:11px; color:var(--muted); font-family:var(--mono);}
+.legend-bar{flex:1; height:10px; border-radius:6px; background:linear-gradient(90deg, var(--heat-cold), var(--heat-ideal), var(--heat-hot)); max-width:280px;}
+
+/* weight-slider demo */
+.demo{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:18px; box-shadow:var(--shadow); margin:26px 0;}
+.demo h4{margin:0 0 4px; font-size:14px;}
+.demo .sub{color:var(--muted); font-size:12.5px; margin:0 0 14px;}
+.sliders{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:16px;}
+.slider-row label{display:block; font-size:11.5px; font-weight:700; margin-bottom:4px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
+.slider-row output{font-family:var(--mono); color:var(--ink);}
+input[type=range]{width:100%; accent-color:var(--user);}
+.bars{display:flex; flex-direction:column; gap:8px;}
+.bar-row{display:grid; grid-template-columns:160px 1fr 46px; align-items:center; gap:10px; font-size:12px;}
+.bar-track{height:16px; background:var(--bg-alt); border-radius:8px; overflow:hidden; border:1px solid var(--line);}
+.bar-fill{height:100%; border-radius:8px; transition:width .25s ease, background .25s ease;}
+
+/* ============================================================
+   SCAMPER card grids (icons per letter)
+   ============================================================ */
+.flow-row{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 26px;}
+.flow-node{
+  flex:1 1 140px; background:var(--paper); border:1px solid var(--line); border-radius:10px;
+  padding:12px; font-size:12.5px; box-shadow:var(--shadow); text-align:center;
+}
+.flow-node b{display:block; font-size:12.5px; margin-bottom:3px;}
+.flow-arrow{align-self:center; color:var(--muted); font-size:18px;}
+
+/* venn combine */
+.venn{position:relative; height:210px; margin:10px auto 30px; max-width:520px;}
+.venn-circle{position:absolute; top:20px; border-radius:50%; opacity:.72; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:700; text-align:center; padding:10px; color:#fff;}
+.v1{left:0; width:190px; height:170px; background:var(--user);}
+.v2{left:130px; width:190px; height:170px; background:var(--coach);}
+.venn-tags{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:-6px;}
+.venn-tag{font-size:11.5px; padding:5px 10px; border-radius:999px; border:1px solid var(--line-strong); background:var(--paper);}
+.venn-tag.later{opacity:.55; text-decoration:line-through; border-style:dashed;}
+.venn-tag.soon{border-color:var(--should); color:var(--should); font-weight:700;}
+
+/* adapt vs table */
+.vs-grid{display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:stretch; margin:18px 0 28px; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow);}
+.vs-col{background:var(--paper); padding:16px;}
+.vs-col h4{margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.05em;}
+.vs-col ul{margin:0; padding-left:18px; font-size:12.8px; color:var(--muted);}
+.vs-col.mine h4{color:var(--user);}
+.vs-mid{display:flex; align-items:center; justify-content:center; background:var(--bg-alt); font-weight:800; color:var(--muted); font-size:11px; padding:0 10px; writing-mode:vertical-rl;}
+
+.mode-toggle{display:flex; gap:0; border:1px solid var(--line-strong); border-radius:999px; overflow:hidden; width:max-content; margin:0 auto 18px; font-size:11.5px; font-weight:700;}
+.mode-toggle span{padding:7px 16px;}
+.mode-toggle .on{background:var(--user); color:#fff;}
+
+/* modify schema tree */
+.schema-wrap{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:18px; box-shadow:var(--shadow); margin:18px 0 28px;}
+.schema-core{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+.schema-chip{background:var(--could-bg); color:var(--could); font-family:var(--mono); font-size:12px; padding:5px 10px; border-radius:6px; font-weight:700;}
+.syn-row{display:grid; grid-template-columns:140px 1fr; gap:10px; align-items:center; font-size:12.5px; padding:6px 0; border-top:1px dashed var(--line);}
+.syn-row:first-of-type{border-top:none;}
+.syn-target{font-family:var(--mono); font-weight:700; color:var(--ink);}
+.syn-list{color:var(--muted);}
+.syn-list code{background:var(--bg-alt); padding:1px 6px; border-radius:4px; margin-right:4px; font-size:11.5px;}
+.vendor-badges{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+.vendor-card{flex:1 1 150px; border:2px dashed var(--line-strong); border-radius:10px; padding:10px; font-size:12px; text-align:center; color:var(--muted);}
+
+/* other-uses radial cards */
+.stake-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:18px 0 28px;}
+.stake-card{background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px; box-shadow:var(--shadow);}
+.stake-card .icon{font-size:22px; margin-bottom:6px; display:block;}
+.stake-card h4{margin:0 0 8px; font-size:14px;}
+.stake-card ul{margin:0; padding-left:18px; font-size:12.6px; color:var(--muted);}
+.stake-card li{margin-bottom:4px;}
+
+/* eliminate torn tickets */
+.ticket-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin:18px 0 28px;}
+.ticket{
+  background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  box-shadow:var(--shadow); position:relative;
+}
+.ticket .cut{
+  text-decoration:line-through; color:var(--muted); font-weight:700; font-size:13.5px; margin:0 0 6px;
+}
+.ticket .cut::before{content:"✂ "; text-decoration:none;}
+.ticket .instead{font-size:12.6px; margin:0; color:var(--ink);}
+.ticket .instead b{color:var(--could);}
+
+/* reverse flow diagram */
+.rev-flow{display:flex; align-items:center; justify-content:center; gap:14px; margin:20px 0; flex-wrap:wrap; font-size:12.5px;}
+.rev-box{background:var(--paper); border:1px solid var(--line-strong); border-radius:10px; padding:12px 16px; text-align:center; font-weight:700; box-shadow:var(--shadow);}
+.rev-arrow{font-size:20px; color:var(--muted);}
+.phase-row{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 26px;}
+.phase{flex:1 1 240px; border-radius:12px; padding:16px; box-shadow:var(--shadow);}
+.phase.p1{background:var(--question-bg); border:1px solid var(--line);}
+.phase.p2{background:var(--could-bg); border:1px solid var(--could);}
+.phase h4{margin:0 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:.05em;}
+.badge-row{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+.seed-badge{font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--wont-bg); color:var(--wont);}
+.verified-badge{font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--could-bg); color:var(--could);}
+
+/* what-if dream cards */
+.whatif-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin:10px 0 8px;}
+.wcard{border-radius:14px; padding:18px; box-shadow:var(--shadow); border:1px solid var(--line);}
+.wcard.budget{background:linear-gradient(160deg, var(--decision-bg), var(--paper));}
+.wcard.opposite{background:linear-gradient(160deg, var(--insight-bg), var(--paper));}
+.wcard.solved{background:linear-gradient(160deg, var(--could-bg), var(--paper));}
+.wcard h3{margin:0 0 4px; font-size:16px;}
+.wcard .wsub{font-size:11.5px; color:var(--muted); font-family:var(--mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:.06em;}
+
+/* ============================================================
+   PAUSE DIVIDER
+   ============================================================ */
+.pause{text-align:center; padding:50px 0; position:relative;}
+.pause .moon{font-size:34px; display:block; margin-bottom:8px;}
+.pause h2{margin:0 0 6px; font-size:20px;}
+.pause p{color:var(--muted); max-width:50ch; margin:0 auto 24px; font-size:13.5px;}
+.pause-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; text-align:left; margin-bottom:20px;}
+.pause-card{background:var(--paper); border:1px solid var(--line); border-left:4px solid var(--insight); border-radius:8px; padding:12px 14px; font-size:12.6px; box-shadow:var(--shadow);}
+.pause-card b{color:var(--insight); display:block; font-size:11px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px;}
+.open-qs{background:var(--bg-alt); border:1px dashed var(--line-strong); border-radius:10px; padding:14px 18px; text-align:left; font-size:12.6px; color:var(--muted); max-width:640px; margin:0 auto;}
+.open-qs b{color:var(--ink);}
+
+/* ============================================================
+   MOSCOW BOARD
+   ============================================================ */
+.board{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:22px 0;}
+@media (max-width:820px){.board{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:520px){.board{grid-template-columns:1fr;}}
+.col{border-radius:12px; padding:12px; box-shadow:var(--shadow); border-top:5px solid;}
+.col.must{background:var(--must-bg); border-color:var(--must);}
+.col.should{background:var(--should-bg); border-color:var(--should);}
+.col.could{background:var(--could-bg); border-color:var(--could);}
+.col.wont{background:var(--wont-bg); border-color:var(--wont);}
+.col h3{margin:0 0 3px; font-size:14px;}
+.col .count{font-family:var(--mono); font-size:10.5px; color:var(--muted); margin-bottom:10px; display:block;}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:8px; font-size:12px; line-height:1.4; box-shadow:0 1px 2px rgba(0,0,0,.05);}
+.card .ribbon{display:block; margin-top:4px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.04em;}
+.card .ribbon.demoted{color:var(--must);}
+.card .ribbon.added{color:var(--should);}
+.card.wont-card{text-decoration:line-through; color:var(--muted); opacity:.85;}
+
+.revision-strip{display:flex; flex-direction:column; gap:10px; margin:24px 0; padding:16px; background:var(--paper); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);}
+.revision-strip h4{margin:0 0 4px; font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);}
+.rev-item{display:flex; align-items:center; gap:10px; font-size:12.6px; flex-wrap:wrap;}
+.rev-item .from{color:var(--muted); text-decoration:line-through;}
+.rev-item .arrow{color:var(--gold); font-weight:800;}
+.rev-item .to{font-weight:700;}
+
+/* ============================================================
+   SYNTHESIS CLIMAX — wheel
+   ============================================================ */
+.synthesis{background:radial-gradient(ellipse at 50% 0%, var(--decision-bg), transparent 60%); padding-top:60px;}
+.wheel-frame{display:flex; flex-direction:column; align-items:center; margin-bottom:10px;}
+.hub{
+  width:120px; height:120px; border-radius:50%; background:var(--ink); color:var(--bg);
+  display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800;
+  font-size:12px; padding:10px; box-shadow:var(--shadow); border:4px solid var(--gold); line-height:1.25;
+}
+.rim{width:100%; max-width:720px; height:3px; background:var(--line-strong); position:relative; margin:0 auto;}
+.spokes{display:flex; justify-content:space-between; max-width:720px; margin:0 auto; padding:0 6px;}
+.spoke{width:3px; height:26px; background:var(--line-strong);}
+.synth-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; margin-top:0;}
+.synth-card{
+  background:var(--paper); border:1px solid var(--line); border-top:5px solid var(--gold);
+  border-radius:12px; padding:18px; box-shadow:var(--shadow); position:relative;
+}
+.synth-num{
+  position:absolute; top:-16px; left:16px; width:32px; height:32px; border-radius:50%;
+  background:var(--gold); color:#241a04; font-weight:800; display:flex; align-items:center; justify-content:center;
+  box-shadow:var(--shadow); font-size:14px;
+}
+.synth-card h4{margin:14px 0 8px; font-size:14.5px;}
+.synth-card p{margin:0; font-size:12.8px; color:var(--muted);}
+.synth-card p b{color:var(--ink);}
+
+footer{padding:50px 0 70px; text-align:center; color:var(--muted); font-size:12px; border-top:1px dashed var(--line); margin-top:20px;}
+footer .mono{display:block; margin-top:6px;}
+</style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle light / dark" aria-label="Toggle theme">◐</button>
+
+<nav class="route-nav" aria-label="Session route">
+  <div class="route-nav-inner">
+    <a href="#morph" title="Morphological Analysis"><span class="dot"></span>MORPH</a>
+    <a href="#substitute" title="SCAMPER: Substitute"><span class="dot"></span>S</a>
+    <a href="#combine" title="SCAMPER: Combine"><span class="dot"></span>C</a>
+    <a href="#adapt" title="SCAMPER: Adapt"><span class="dot"></span>A</a>
+    <a href="#modify" title="SCAMPER: Modify"><span class="dot"></span>M</a>
+    <a href="#otheruses" title="SCAMPER: Put to other uses"><span class="dot"></span>P</a>
+    <a href="#eliminate" title="SCAMPER: Eliminate"><span class="dot"></span>E</a>
+    <a href="#reverse" title="SCAMPER: Reverse"><span class="dot"></span>R</a>
+    <a href="#whatif" title="What If Scenarios"><span class="dot"></span>WHAT-IF</a>
+    <a href="#converge" title="Convergence · MoSCoW"><span class="dot"></span>MoSCoW</a>
+    <a href="#synthesis" title="Final Synthesis"><span class="dot"></span>SYNTH</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <header class="hero" id="top">
+    <p class="hero-eyebrow">Brainstorming keepsake · 2026‑09‑21 → 2026‑09‑22</p>
+    <h1>Fitting a rider to a bike is a <span>measurement problem</span> wearing a search‑engine costume.</h1>
+    <p class="lede">A Creative Partner session between a rider (user) and a coach, working out a bike‑selection platform: prompt‑driven search over an auto‑filled geometry database, fit filters, and a map of where to see / test / buy.</p>
+    <div class="hero-meta">
+      <span class="pill">Mode: <b>Creative Partner</b></span>
+      <span class="pill">Techniques: <b>Morphological → SCAMPER → What‑If</b></span>
+      <span class="pill status">● complete</span>
+      <span class="pill">Updated <b>2026‑09‑22 21:37</b></span>
+    </div>
+
+    <div class="geo-card">
+      <figure>
+        <svg width="260" height="190" viewBox="0 0 260 190" role="img" aria-label="Bicycle geometry diagram showing stack and reach">
+          <!-- wheels -->
+          <circle cx="55" cy="150" r="34" fill="none" stroke="var(--muted)" stroke-width="4"/>
+          <circle cx="205" cy="150" r="34" fill="none" stroke="var(--muted)" stroke-width="4"/>
+          <!-- frame -->
+          <g fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M55,150 L95,80"/>            <!-- seat tube -->
+            <path d="M95,80 L175,62"/>            <!-- top tube -->
+            <path d="M95,80 L120,150"/>           <!-- seat/chain stay area -->
+            <path d="M120,150 L55,150"/>          <!-- chainstay -->
+            <path d="M120,150 L185,100"/>         <!-- down tube -->
+            <path d="M175,62 L185,100"/>          <!-- head tube -->
+            <path d="M185,100 L205,150"/>         <!-- fork -->
+            <path d="M95,80 L88,50" stroke-width="3"/> <!-- seatpost -->
+          </g>
+          <circle cx="120" cy="150" r="4" fill="var(--gold)"/>
+          <!-- stack (vertical dashed) -->
+          <line x1="120" y1="150" x2="120" y2="62" stroke="var(--heat-ideal)" stroke-width="2" stroke-dasharray="4 4"/>
+          <line x1="112" y1="150" x2="128" y2="150" stroke="var(--heat-ideal)" stroke-width="2"/>
+          <line x1="112" y1="62" x2="128" y2="62" stroke="var(--heat-ideal)" stroke-width="2"/>
+          <text x="126" y="108" font-size="10" fill="var(--heat-ideal)" font-family="var(--mono)">STACK</text>
+          <!-- reach (horizontal dashed) -->
+          <line x1="120" y1="62" x2="175" y2="62" stroke="var(--heat-hot)" stroke-width="2" stroke-dasharray="4 4"/>
+          <line x1="120" y1="54" x2="120" y2="70" stroke="var(--heat-hot)" stroke-width="2"/>
+          <line x1="175" y1="54" x2="175" y2="70" stroke="var(--heat-hot)" stroke-width="2"/>
+          <text x="122" y="48" font-size="10" fill="var(--heat-hot)" font-family="var(--mono)">REACH</text>
+        </svg>
+        <figcaption>every idea below eventually cashes out as one of these two numbers</figcaption>
+      </figure>
+      <div class="geo-note">
+        <p><b>The whole session in one picture:</b> a rider is a set of measurements (height, inseam, torso, reach of the arms…). A bike is a set of measurements (stack, reach, top tube, seat angle…). The platform's job is to compare the two sets honestly — tier by tier, source by source, vendor by vendor — and say <i>how well</i> they line up, not just <i>whether</i> they do.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MORPHOLOGICAL ANALYSIS ================= -->
+  <section class="tech" id="morph">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:var(--could);">⊞</div>
+      <div>
+        <div class="sec-tag">Technique 1</div>
+        <h2>Morphological Analysis</h2>
+      </div>
+    </div>
+    <p class="sec-intro">Lay out every dimension of the problem as a row of options, then pick one option per row to assemble a first buildable combination — a "lean v1" cut straight through the whole option space.</p>
+
+    <table class="matrix">
+      <thead><tr><th>Dimension</th><th>Options on the table</th><th>Lean v1 pick</th></tr></thead>
+      <tbody>
+        <tr><td>How the rider expresses need</td><td class="opts">free‑text prompt · photo of rider · questionnaire</td><td><span class="chip-pick">free‑text prompt</span></td></tr>
+        <tr><td>How geometries are fetched</td><td class="opts">vendor PDF · site scraping · vendor API · community DB · aggregators</td><td><span class="chip-pick">vendor PDF only</span></td></tr>
+        <tr><td>Update policy</td><td class="opts">manual trigger · scheduled automatic</td><td><span class="chip-pick">manual trigger</span></td></tr>
+        <tr><td>Output display</td><td class="opts">heatmap table · plain ranked list · single score</td><td><span class="chip-pick">heatmap table</span></td></tr>
+        <tr><td>Rider input depth</td><td class="opts">required · +recommended · +useful · +optional</td><td><span class="chip-pick">required tier only</span></td></tr>
+        <tr><td>Map scope</td><td class="opts">full interactive map · dealer list only · none</td><td><span class="chip-pick">dealer list only</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="tape">
+      <div class="tape-title">Rider measurement tiers (the ruler everything is filtered against)</div>
+      <div class="tape-bar">
+        <div class="tape-seg t1"><span>1 · Required</span></div>
+        <div class="tape-seg t2"><span>2 · Recommended</span></div>
+        <div class="tape-seg t3"><span>3 · Useful</span></div>
+        <div class="tape-seg t4"><span>4 · Optional</span></div>
+      </div>
+      <div class="tape-legend">
+        <span><b>Required —</b> height, cycling inseam, riding style &amp; goals</span>
+        <span><b>Recommended —</b> torso, arm, shoulder width, sit‑bone width, flexibility</span>
+        <span><b>Useful —</b> thigh/lower‑leg, foot length, hand size, sternal notch</span>
+        <span><b>Optional —</b> joint rotation range, leg‑length discrepancy, mobility, weight</span>
+      </div>
+    </div>
+
+    <div class="heat-wrap">
+      <p class="heat-cap">Illustrative output — one row per bike, one column per geometry parameter, colour = distance from the rider's ideal range</p>
+      <table class="heat">
+        <thead><tr><th>Bike</th><th>Stack</th><th>Reach</th><th>Top tube</th><th>Seat angle</th><th>Standover</th></tr></thead>
+        <tbody>
+          <tr><td class="bikename">Vendor A · Endurance 54</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td>
+            <td class="cell" style="background:var(--heat-warm)">+6mm</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td></tr>
+          <tr><td class="bikename">Vendor A · Race 52</td>
+            <td class="cell" style="background:var(--heat-hot)">‑18mm</td>
+            <td class="cell" style="background:var(--heat-warm)">‑9mm</td>
+            <td class="cell" style="background:var(--heat-hot)">‑12mm</td>
+            <td class="cell" style="background:var(--heat-warm)">+3°</td>
+            <td class="cell" style="background:var(--heat-cold)">tight</td></tr>
+          <tr><td class="bikename">Vendor B · Gravel M</td>
+            <td class="cell" style="background:var(--heat-warm)">+6mm</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td>
+            <td class="cell" style="background:var(--heat-hot)">+10mm</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td>
+            <td class="cell" style="background:var(--heat-ideal)">ideal</td></tr>
+        </tbody>
+      </table>
+      <div class="legend-scale"><span>too short / tight</span><div class="legend-bar"></div><span>too long / loose</span></div>
+    </div>
+
+    <div class="demo">
+      <h4>🎚 Try the coach's "adjustable weights" idea</h4>
+      <p class="sub">User‑adjustable weights via sliders — score and row order update live, no formula required to feel the effect.</p>
+      <div class="sliders">
+        <div class="slider-row"><label>Stack weight — <output id="out-stack">5</output></label><input type="range" min="0" max="10" value="5" id="w-stack"></div>
+        <div class="slider-row"><label>Reach weight — <output id="out-reach">5</output></label><input type="range" min="0" max="10" value="5" id="w-reach"></div>
+        <div class="slider-row"><label>Top tube weight — <output id="out-ttube">5</output></label><input type="range" min="0" max="10" value="5" id="w-ttube"></div>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div class="route-marker">morphological transcript</div>
+    <div class="transcript">
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Dimension: how the rider expresses need — free‑text prompt, photo of rider, or questionnaire.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Dimension: how bike geometries are fetched — the data‑acquisition side of geometry tables.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Geometry source precedence: vendor PDF tables &gt; vendor site scraping &gt; vendor API &gt; community DB &gt; aggregators.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Official vendor info beats non‑official; between conflicting official sources, the most recent wins.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>The cascade is short‑circuiting: once vendor info is found, stop — no need to go further down the source list.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Geometry sources, ranked: vendor PDF (LLM/OCR), site scraping, vendor API/feed, community‑submitted, aggregators.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Store provenance + date per field, so conflicts can be arbitrated later.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Update policy v1: manual trigger; automatic scheduling comes later, reusing the same backend ingestion process.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag question">question</span></span><p>Unsure how intensive updates will actually need to be.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Ingestion as one idempotent pipeline, triggered manually in v1 (CLI/admin button) — a scheduler slots in later without changing it.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Cheap incremental refresh: hash/ETag/Last‑Modified per source doc, re‑parse only what changed — LLM parsing is the expensive part.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Output: a table, one bike per row, one column per geometry parameter.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Heatmap‑coloured cells showing how well each parameter fits the rider's size.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Explanations of fit are important — not just a colour, a reason.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>A global score could be computed, if geometry parameters can be prioritized (weights).</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Colour scale relative to the rider's ideal range per parameter (too short / ideal / too long) — diverging, not just good/bad.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>User‑adjustable weights via sliders or drag‑to‑rank columns; score and row order update live.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Tier 1 · Required: height, cycling inseam, riding style and goals.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Tier 2 · Recommended: torso length, arm length, shoulder width, sit‑bone width, flexibility.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Tier 3 · Useful: thigh &amp; lower‑leg length, foot length/shoe size, hand size, sternal notch height.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Tier 4 · Optional: hip/knee rotation range, leg‑length discrepancy, foot structure, shoulder/thoracic mobility, body weight.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Tiered progressive filtering: required tier excludes non‑fitting bikes, then recommended, useful, optional refine the list.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>User accounts to register and save measurements.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Guide riders to specialist shops that can measure everything (ties into the map feature).</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Tier completeness meter: "results sharpen as you add recommended measurements", with per‑tier confidence.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Hard‑exclude only on the required tier; later tiers re‑rank/score rather than exclude, to avoid empty lists.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Shops on the map tagged "bike fitting/measurement available" — one map serving both test/buy and measure.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Shop data source: manufacturers' official dealer lists (address, phone).</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Shop data source: manual additions by registered users.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>A dealer list only says a shop carries the brand, not that a given model is in stock or testable — per‑shop, per‑model availability is a separate layer.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Map pins carry badges: sells / test‑ride available / fitting service, plus "last verified" date; users can confirm or flag outdated.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Shop‑owner claim flow: the owner claims a listing and keeps stock and test‑bike info current.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Filter: generalized usage categories — needs a common taxonomy across brands.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Filter: frame shape.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag question">question</span></span><p>Unsure whether frame shape and factory locations are easy to find in source data.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Usage taxonomy: a small fixed set (road, gravel, MTB, city/commute, touring, e‑bike…) mapped from each brand's own category names at ingestion.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Frame shape derived from geometry (standover/step‑through, top‑tube slope) or a tag, rather than scraped.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>"Made‑in" filter: nullable field with confidence — "unknown" shown honestly, filled by vendor page, community, or manual entry.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Sparse‑attribute policy: filters on missing data show "unknown" rather than silently excluding bikes.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Chosen morphological combo — <b>Lean v1</b>: text‑prompt input + vendor‑PDF geometry only + manual update + heatmap table output + required rider tier only + dealer lists only for the map.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag question">open</span></span><p>Could Lean v1 still keep accounts, weights and explanations, as cheap adds? — left open.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: SUBSTITUTE ================= -->
+  <section class="tech" id="substitute">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#6b9b3f;">S</div>
+      <div><div class="sec-tag">SCAMPER · Substitute</div><h2>Swap the entry point</h2></div>
+    </div>
+    <p class="sec-intro">What else could stand in for "type a prompt" or "measure yourself with a tape"?</p>
+
+    <div class="flow-row">
+      <div class="flow-node"><b>💬 prompt</b>default entry</div>
+      <div class="flow-arrow">⇄</div>
+      <div class="flow-node"><b>🚲 "a bike I love"</b>find geometry‑closest matches</div>
+      <div class="flow-arrow">⇄</div>
+      <div class="flow-node"><b>🏬 nearby shop first</b>catalogue as pre‑filter</div>
+      <div class="flow-arrow">⇄</div>
+      <div class="flow-node"><b>📷 photo of rider</b>inferred measurements</div>
+    </div>
+
+    <div class="transcript">
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Substitute the prompt with "pick a bike you already love" — find geometry‑closest bikes to it.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Substitute entry point: pick a nearby shop, and the platform lists everything purchasable there, scored for fit.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Shop‑first mode shares the same fit table, with the shop's catalogue as the pre‑filter instead of the prompt.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Needs per‑shop stock data the dealer list doesn't have: shop's brand list → all models of those brands as a v1 approximation, flagged "ask shop to confirm availability".</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Substitute manual measuring: infer rider measurements from a photo, then let the user edit them.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Photo inference prefills all tiers with estimated values, each tagged "estimated" until confirmed.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Privacy: process the photo on‑device or discard it right after extraction — store only the numbers.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Accuracy needs a reference object (A4 sheet, credit card) or a known height in the photo, to calibrate scale.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: COMBINE ================= -->
+  <section class="tech" id="combine">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#3f7f9b;">C</div>
+      <div><div class="sec-tag">SCAMPER · Combine</div><h2>What else could ride alongside this?</h2></div>
+    </div>
+    <p class="sec-intro">The user felt this lens had little to offer — the coach pushed a few pairings anyway, and most got parked for later.</p>
+
+    <div class="venn">
+      <div class="venn-circle v1">Fit engine<br>(core)</div>
+      <div class="venn-circle v2">Adjacent worlds</div>
+    </div>
+    <div class="venn-tags">
+      <span class="venn-tag later">used‑bike marketplaces</span>
+      <span class="venn-tag later">cycling clubs / group rides</span>
+      <span class="venn-tag later">component swap simulation</span>
+      <span class="venn-tag soon">book a bike‑fitter from the map</span>
+    </div>
+
+    <div class="transcript" style="margin-top:24px;">
+      <div class="msg user"><span class="who">Rider <span class="tag direction">direction</span></span><p>Combine lens: not much jumps out to combine with.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Combine with used‑bike marketplaces — same fit table applied to second‑hand listings.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Combine with cycling clubs/events for group test rides.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Combine fit scoring with accessories/components (stem, saddle, cranks) to fix a near‑miss bike.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Combine with bike‑fitter professionals: book a fitting straight from the map.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Second‑hand listings and club/event group rides: long‑term nice‑to‑have only.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Component‑swap simulation is interesting, but adds real complexity.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Professional‑fitting booking from the map is easier and helpful — likely comes earlier than components.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Fitting v1 without booking: map just shows shops tagged "fitting available" with phone/link — booking comes later.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Components MVP: only a "near‑miss hint" — e.g. "reach 8mm short, a 10mm longer stem would fit" — no full simulation.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: ADAPT ================= -->
+  <section class="tech" id="adapt">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#9b6a3f;">A</div>
+      <div><div class="sec-tag">SCAMPER · Adapt</div><h2>Borrow a shape from elsewhere</h2></div>
+    </div>
+    <p class="sec-intro">Adapted from a known reference (99spokes.com) and from car configurators — sharpening what makes this platform different.</p>
+
+    <div class="vs-grid">
+      <div class="vs-col"><h4>99spokes.com (reference)</h4><ul>
+        <li>Rich bike descriptions: frame material, wheel size, brakes, components</li>
+        <li>Spec‑sheet browsing style</li>
+        <li>Less complete rider measurements</li>
+      </ul></div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-col mine"><h4>This platform</h4><ul>
+        <li>Deep rider‑measurement fit: tiers, heatmap, scores</li>
+        <li>Spec fields adapted in as extra facets (material, wheel size, brake type, drivetrain) — optional, reused from the same PDF pipeline</li>
+        <li>Fit is the hook, not the spec sheet</li>
+      </ul></div>
+    </div>
+
+    <div class="mode-toggle"><span class="on">🎯 Rider‑measurement mode</span><span>🔧 Expert / geometry‑target mode</span></div>
+
+    <div class="transcript">
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Reference: 99spokes.com has bike search with less complete rider measurements but richer bike descriptions (frame material, wheel size, brakes, components).</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Differentiator vs 99spokes: deep rider‑measurement fit (tiers, heatmap, scores) rather than spec‑sheet browsing.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Adapt spec filters: frame material, wheel size, brake type, drivetrain — extra facets layered on top of fit.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Spec fields optional in v1 (geometry PDFs often include spec tables too) — extraction reused from the same pipeline.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Adapt from car configurators: expert riders who already know their ideal geometry enter each parameter directly and get the closest bikes.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Geometry‑target mode: bypasses rider measurements entirely, same heatmap table against typed target values.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Target‑mode ranges: each parameter takes a value with tolerance (e.g. reach 385 ± 5mm), plus a per‑parameter weight.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>"Clone my current bike" shortcut: enter the geometry of the bike you already ride as the target.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Configurator‑style step‑by‑step option picker (usage, budget, frame shape, wheel size) for beginners, as an alternative to the free‑text prompt.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: MODIFY ================= -->
+  <section class="tech" id="modify">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#9b3f6a;">M</div>
+      <div><div class="sec-tag">SCAMPER · Modify</div><h2>Turn the scope dial down</h2></div>
+    </div>
+    <p class="sec-intro">More vendors means more naming chaos to reconcile; more measurements means fewer bikes match. The fix: a canonical schema, and a much smaller starting vendor count.</p>
+
+    <div class="schema-wrap">
+      <div class="tape-title">Canonical core geometry schema →  per‑vendor synonym map</div>
+      <div class="schema-core">
+        <span class="schema-chip">stack</span><span class="schema-chip">reach</span><span class="schema-chip">top tube</span>
+        <span class="schema-chip">seat angle</span><span class="schema-chip">standover</span>
+      </div>
+      <div class="syn-row"><div class="syn-target">seat angle</div><div class="syn-list"><code>STA</code><code>seat tube angle</code><code>seat angle</code> → unknown names go to a review queue</div></div>
+      <div class="syn-row"><div class="syn-target">grow schema</div><div class="syn-list">only when a new filter actually needs a parameter — not upfront</div></div>
+      <div class="vendor-badges">
+        <div class="vendor-card">Vendor 1<br><small>contrasting PDF layout A</small></div>
+        <div class="vendor-card">Vendor 2<br><small>contrasting PDF layout B</small></div>
+      </div>
+    </div>
+
+    <div class="transcript">
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Bigger database = more vendors = more parameter‑naming variants to reconcile; cost grows with the number of filters.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>More rider measurements = harder to find matching bikes.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Canonical geometry schema plus a per‑vendor synonym map (e.g. "seat tube angle" / "STA" / "seat angle"); unknown names go to a review queue.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Start with a small set of core geometry params (stack, reach, top tube, seat angle, standover) and grow the schema only when a filter needs it.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Scoring instead of exact matching: more measurements adjust ranking, avoiding the empty‑list problem as inputs grow.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Launch with few vendors deep (e.g. 5 brands, full data) rather than many shallow.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>v1 scope: maximum 2 vendors, with complete catalogs.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Pick the 2 vendors for contrasting PDF layouts, to stress‑test the parser and synonym map early.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Choose vendors with dealer lists and broad size ranges, so map and fit table both have real content.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Per‑vendor onboarding checklist (PDF format, synonym map, category mapping, dealer list) — reused for vendor 3+.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: PUT TO OTHER USES ================= -->
+  <section class="tech" id="otheruses">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#7f6a9b;">P</div>
+      <div><div class="sec-tag">SCAMPER · Put to other uses</div><h2>Who else could this serve?</h2></div>
+    </div>
+    <p class="sec-intro">The same fit table, turned toward shops, brands, and fitters instead of only the rider.</p>
+
+    <div class="stake-grid">
+      <div class="stake-card"><span class="icon">🏬</span><h4>Shops</h4><ul>
+        <li>Advertise sales, offer prioritized contact</li>
+        <li>See top returned bikes near them</li>
+        <li>See searches in their area with no fitting bike (demand signal)</li>
+      </ul></div>
+      <div class="stake-card"><span class="icon">🏭</span><h4>Brands</h4><ul>
+        <li>Announce new bikes, fill their own geometries (highest‑precedence official source)</li>
+        <li>Get a "gap report": rider sizes searched with no matching bike in their catalog</li>
+      </ul></div>
+      <div class="stake-card"><span class="icon">🧑‍🔧</span><h4>Fitters</h4><ul>
+        <li>Easy access to a rider's saved measurements</li>
+        <li>Rider‑controlled sharing: explicit consent / expiring link (GDPR‑friendly)</li>
+        <li>Shop "lead" flow: rider sends a fit‑table shortlist as a ready‑made brief</li>
+      </ul></div>
+    </div>
+
+    <div class="transcript">
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Shops use the platform to advertise sales and offer prioritized contact.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Brands announce new bikes and fill in their own geometries.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Fitters get easy access to a rider's saved measurements.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Brand self‑service upload = highest‑precedence official source, replacing PDF parsing for that vendor.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Rider‑controlled sharing: explicit consent / expiring link to give a fitter or shop read access to measurements.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Shop "lead" flow: rider sends a fit‑table shortlist to a shop, shop gets a ready‑made brief.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Shop and brand promotion as a revenue model, clearly labelled and never altering fit scores.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Professionals get platform statistics to guide catalog filling (what's searched/missing).</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Shops learn which bikes are most often returned in searches (demand signal).</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Aggregated anonymous stats only: no rider identity, minimum threshold before showing a number.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Brand gap report: rider size ranges searched with no matching bike in their catalog.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Shop dashboard: top returned bikes near them, plus "searches in your area where you had no fitting bike".</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Search analytics logged from v1 even without a professional UI, so history exists later.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: ELIMINATE ================= -->
+  <section class="tech" id="eliminate">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#9b3f3f;">E</div>
+      <div><div class="sec-tag">SCAMPER · Eliminate</div><h2>The cutting‑room floor</h2></div>
+    </div>
+    <p class="sec-intro">Cut it, and see what actually breaks. Most of it survived being cut — with a smaller stand‑in.</p>
+
+    <div class="ticket-grid">
+      <div class="ticket"><p class="cut">the map</p><p class="instead">Riders find resellers themselves — the map is real value, but not essential to fit. <b>Kept as v1‑stripped: dealer list with distance.</b></p></div>
+      <div class="ticket"><p class="cut">the database</p><p class="instead">Only feasible by rescraping everything each time — not realistic. <b>Kept, but live rescraping only for a single bike page on demand.</b></p></div>
+      <div class="ticket"><p class="cut">the prompt</p><p class="instead">Quality‑of‑life, not essential. <b>A structured form (measurements + usage + budget) becomes the core; the prompt is an optional text‑to‑filters translator on top.</b></p></div>
+      <div class="ticket"><p class="cut">accounts</p><p class="instead"><b>Measurements saved in browser/local storage or a shareable URL</b> in v1; accounts added later.</p></div>
+      <div class="ticket"><p class="cut">specialist‑shop guidance</p><p class="instead">Not a v1 priority.</p></div>
+      <div class="ticket"><p class="cut">global fit score</p><p class="instead">Deferred — no formula yet. <b>Stand‑in: "7 of 9 parameters in your ideal range", sortable heatmap columns do the ranking.</b></p></div>
+    </div>
+
+    <div class="transcript">
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Eliminate the map: riders must find resellers themselves — it's real value, not essential to fit.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Eliminate the database: only feasible by rescraping everything each time, which isn't realistic.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>The prompt is a quality‑of‑life feature, not essential.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Without the prompt, a structured form (measurements + usage + budget) is the core; the prompt becomes an optional text‑to‑filters translator on top.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Map as a v1 stripped version: a list of dealers with distance, instead of an interactive map.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Eliminate accounts in v1: measurements saved in browser/local storage or a shareable URL; accounts added later.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Live rescraping on demand only, for a single bike page when a user asks for a refresh.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Specialist‑shop (measurement/fitting) guidance: not a v1 priority.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Global score deferred: no formula yet.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Without a global score, the heatmap itself is the ranking aid: sort by any column, or by count of in‑range parameters.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Simple transparent stand‑in: "7 of 9 parameters in your ideal range" instead of a weighted formula.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Formula research task for later: consult published fit systems, or ask a professional fitter to define ideal ranges per parameter.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCAMPER: REVERSE ================= -->
+  <section class="tech" id="reverse">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:#3f9b7f;">R</div>
+      <div><div class="sec-tag">SCAMPER · Reverse</div><h2>Flip who pushes the data</h2></div>
+    </div>
+    <p class="sec-intro">Instead of the platform pulling data from brands and shops, what if brands and shops pushed it in themselves? Answer: both, in sequence.</p>
+
+    <div class="rev-flow">
+      <div class="rev-box">Platform<br><small>scrapes / parses PDFs</small></div>
+      <div class="rev-arrow">→</div>
+      <div class="rev-box">Brand catalog</div>
+    </div>
+    <div class="rev-flow" style="margin-top:-8px;">
+      <div class="rev-box" style="border-color:var(--could); color:var(--could);">Brand<br><small>uploads via mandatory‑field template</small></div>
+      <div class="rev-arrow">→</div>
+      <div class="rev-box" style="border-color:var(--could); color:var(--could);">Platform</div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase p1"><h4>Phase 1 — seed</h4>Platform seeds 2 vendors via PDF parsing / scraping to solve the cold‑start problem.
+        <div class="badge-row"><span class="seed-badge">seeded by platform</span></div>
+      </div>
+      <div class="phase p2"><h4>Phase 2 — claim</h4>Brands claim their catalog, verify it, see stats, correct errors. Self‑entered data outranks seeded data.
+        <div class="badge-row"><span class="verified-badge">verified by brand</span></div>
+      </div>
+    </div>
+
+    <div class="transcript">
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Reverse search: a new bike is published, riders it fits get notified.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Reverse the catalog data flow: no automatic scraping — brands maintain their own catalog and must fill the platform's mandatory fields.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Reverse the shop data flow: no automatic dealer lists — shops opt in with a shop account and list the brands they sell themselves.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Mandatory‑field validation at brand upload: incomplete bikes rejected with a clear error, removing the need for PDF parsing and synonym maps for that vendor.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Brand template (CSV/form) defines the canonical geometry schema; the brand‑facing schema is the synonym map.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Cold‑start problem: no brands/shops at launch, so seed manually with 2 vendors, then invite them to take over.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Trust: brand‑entered data is official; a shop‑entered brand list could be verified against the brand's own dealer page.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Opt‑in reverses the incentive: platform gives brands and shops stats and leads in exchange for maintaining data.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Keep PDF parsing/scraping to bootstrap the platform — brands will only self‑maintain catalogs once the platform has enough usage.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Chicken‑and‑egg: brand self‑service is only viable after traction, so the platform must seed data itself first.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Two‑phase data strategy: phase 1 platform seeds 2 vendors via PDF/scraping, phase 2 brands claim their catalog and take over.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>"Claim this brand" button on seeded catalogs: the brand verifies, sees stats, corrects errors.</p></div>
+      <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Show "seeded by platform" vs "verified by brand" badge on each bike, using the precedence rule already decided.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= WHAT IF SCENARIOS ================= -->
+  <section class="tech" id="whatif">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:var(--gold); color:#241a04;">?</div>
+      <div><div class="sec-tag">Technique 3</div><h2>What If Scenarios</h2></div>
+    </div>
+    <p class="sec-intro">Three deliberately extreme lenses, to pressure‑test the concept from outside the constraints of v1.</p>
+
+    <div class="whatif-grid">
+      <div class="wcard budget">
+        <div class="wsub">What if · unlimited budget</div>
+        <h3>🚀 Go all the way in</h3>
+        <div class="transcript">
+          <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Hire engineers to build deep‑learning models mapping rider measurements to bikes.</p></div>
+          <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Partner with brands to receive easier‑to‑parse technical sheets than PDFs.</p></div>
+          <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Partner with a brand to design a platform‑branded bike or components each year.</p></div>
+          <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>Partner with a shop for special sales exclusive to the platform.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Learning‑based fit: train on rider feedback and outcomes ("kept vs returned", comfort ratings) to learn what fit actually works, replacing a hand‑written formula.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Collect post‑purchase feedback (comfort after 3 months) from v1, to build the training dataset later.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Platform‑designed bike: use aggregated gap data to spec a bike for underserved rider sizes.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Platform‑exclusive sales: a shop offers a deal when a rider arrives with a fit‑verified shortlist.</p></div>
+        </div>
+      </div>
+
+      <div class="wcard opposite">
+        <div class="wsub">What if · the opposite is true</div>
+        <h3>🔁 Measurements matter little</h3>
+        <div class="transcript">
+          <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Flip: most riders won't provide detailed measurements like specialists do — and that would still be OK.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Height‑only mode: a rider gives just height (plus riding style) and still gets a decent shortlist via typical proportions.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Fill missing measurements with population estimates from height/inseam, tagged "estimated".</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Progressive profiling: ask one more measurement only when it would change the ranking, with a "why we ask" hint.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>The most‑used tier becomes required + recommended only; deep tiers are for enthusiasts and fitters, with an honest confidence label shown to all.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Size‑label mode: rider says "I usually ride a M" and the platform translates to each brand's size chart.</p></div>
+        </div>
+      </div>
+
+      <div class="wcard solved">
+        <div class="wsub">What if · the problem vanished</div>
+        <h3>✅ Fit is already solved</h3>
+        <div class="transcript">
+          <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Even if fit were solved, the platform stays useful as a cross‑brand comparison tool: price, user ratings, etc.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Comparison as a second product axis: fit is the entry hook, comparison (price, specs, ratings) is the retention.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>User ratings tied to rider profile: "riders of your size rated this bike 4.2 for comfort".</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Price history / price‑per‑spec view across brands and shops.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Side‑by‑side compare page for 2–4 bikes, reusing the geometry heatmap plus specs.</p></div>
+          <div class="msg coach"><span class="who">Coach <span class="tag idea">idea</span></span><p>Ratings need traction to be useful — launch without them, add once post‑purchase feedback accumulates.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PAUSE ================= -->
+  <div class="pause">
+    <span class="moon">🌙</span>
+    <h2>Session paused here</h2>
+    <p>"Pause session here; converge (pick/prioritize v1) tomorrow." — before stopping, four threads already tying the ideas together got written down.</p>
+    <div class="pause-grid">
+      <div class="pause-card"><b>Thread 1</b>Heatmap + tiers + estimated/verified badges + honest confidence label are one idea: fit is a scored, transparent range, not a yes/no filter.</div>
+      <div class="pause-card"><b>Thread 2</b>The cold‑start chicken‑and‑egg (seed via PDF, brands/shops take over later) is solved by one incentive loop: stats, gap reports, leads for pros, claim‑brand button, verified‑by‑brand badge.</div>
+      <div class="pause-card"><b>Thread 3</b>Post‑purchase feedback (kept/returned, comfort), collected from v1, unlocks three deferred items at once: global score formula, learned fit model, rating‑by‑rider‑profile comparison.</div>
+      <div class="pause-card"><b>Thread 4</b>v1 lean core = 2 vendors seeded by PDF, structured form (prompt optional), heatmap table with in‑range count, dealer list by distance. Deferred: global score, accounts, fitter guidance, components hints, second‑hand, clubs.</div>
+    </div>
+    <div class="open-qs"><b>Open questions carried into day 2:</b> is scraping legally OK · which 2 vendors · ideal‑range source per parameter (fitter / published method) · shop stock‑data source · usage taxonomy · height‑only fallback proportions.</div>
+  </div>
+
+  <!-- ================= CONVERGENCE / MOSCOW ================= -->
+  <section class="tech" id="converge">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:var(--ink); color:var(--bg);">✓</div>
+      <div><div class="sec-tag">Day 2 · Convergence</div><h2>Locking the MoSCoW</h2></div>
+    </div>
+    <p class="sec-intro">Two small negotiations happened before the list locked, and one more revision landed after it did.</p>
+
+    <div class="transcript">
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Move the "N of M params in range" score stand‑in from Must to Could — the heatmap, sortable by column, already covers ranking for v1 without a computed field.</p></div>
+      <div class="msg user"><span class="who">Rider <span class="tag idea">idea</span></span><p>The ingestion pipeline should show a review summary of what the parser extracted (field, value, unit, source, matched synonym) before committing to the database.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Canonical unit for all geometry values: centimetres (cm) — per‑vendor unit conversion happens at ingestion, alongside the name synonym map.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>Manual ingestion trigger confirmed Must; add the pre‑commit parser‑review summary and unit normalization (cm) to the Must canonical‑schema/synonym‑map item.</p></div>
+    </div>
+
+    <div class="revision-strip">
+      <h4>Mid‑session revisions to the locked list</h4>
+      <div class="rev-item"><span class="from">Must: global score stand‑in</span><span class="arrow">↷</span><span class="to" style="color:var(--could);">Could: N‑of‑M score stand‑in</span></div>
+      <div class="rev-item"><span>Must: canonical schema / synonym map</span><span class="arrow">＋</span><span class="to">parser‑review summary, unit normalization → cm</span></div>
+      <div class="rev-item"><span class="from">Must: dealer list w/ distance</span><span class="arrow">↷</span><span class="to" style="color:var(--should);">Should: dealer list w/ distance</span></div>
+    </div>
+
+    <div class="board">
+      <div class="col must"><h3>Must</h3><span class="count">the v1 spine</span>
+        <div class="card">Required‑tier rider input (height, inseam, riding style/goals)</div>
+        <div class="card">Heatmap fit table</div>
+        <div class="card">2 vendors, PDF‑seeded catalogs</div>
+        <div class="card">Canonical schema + synonym map (names + units → cm)<span class="ribbon added">+ parser‑review summary, cm normalization</span></div>
+        <div class="card">Provenance + date per field</div>
+        <div class="card">Manual‑trigger idempotent ingestion, with pre‑commit parser‑review summary</div>
+        <div class="card">Usage taxonomy mapping</div>
+      </div>
+      <div class="col should"><h3>Should</h3><span class="count">fast‑follow</span>
+        <div class="card">Free‑text prompt</div>
+        <div class="card">Height‑only quick mode</div>
+        <div class="card">Shop badges (fitting / test‑ride / last‑verified)</div>
+        <div class="card">Post‑purchase feedback collection</div>
+        <div class="card">Search analytics logging</div>
+        <div class="card">Dealer list w/ distance<span class="ribbon demoted">↳ demoted from Must</span></div>
+      </div>
+      <div class="col could"><h3>Could</h3><span class="count">nice, not needed</span>
+        <div class="card">Recommended / useful / optional tiers</div>
+        <div class="card">N‑of‑M in‑range score stand‑in<span class="ribbon demoted">↳ demoted from Must</span></div>
+        <div class="card">Geometry‑target / expert mode</div>
+        <div class="card">Incremental refresh</div>
+        <div class="card">Full interactive map</div>
+        <div class="card">Fitting‑available tag + link</div>
+        <div class="card">Component near‑miss hint</div>
+        <div class="card">Frame‑shape filter</div>
+        <div class="card">Made‑in filter</div>
+      </div>
+      <div class="col wont"><h3>Won't (this time)</h3><span class="count">explicitly parked</span>
+        <div class="card wont-card">Full weighted global score</div>
+        <div class="card wont-card">Brand self‑service claim</div>
+        <div class="card wont-card">Shop‑owner claim flow</div>
+        <div class="card wont-card">Accounts</div>
+        <div class="card wont-card">Full component simulation</div>
+        <div class="card wont-card">Second‑hand marketplace</div>
+        <div class="card wont-card">Club/event integration</div>
+        <div class="card wont-card">Comparison page</div>
+      </div>
+    </div>
+
+    <div class="transcript">
+      <div class="msg user"><span class="who">Rider <span class="tag insight">insight</span></span><p>Synthesis: shops‑in‑from‑the‑start is more of a nice‑to‑have, not that important for v1.</p></div>
+      <div class="msg user decision"><span class="who">Rider <span class="tag decision">decision</span></span><p>MoSCoW revised: demote "dealer list w/ distance" from Must to Should. The v1 Must‑have spine is now purely the fit engine + data pipeline; the entire shop/map layer (dealer list, badges, claim flow) is deferred to a fast‑follow.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SYNTHESIS CLIMAX ================= -->
+  <section class="tech synthesis" id="synthesis">
+    <div class="sec-head">
+      <div class="sec-badge" style="background:var(--gold); color:#241a04;">◎</div>
+      <div><div class="sec-tag">Final synthesis</div><h2>Four spokes, one wheel</h2></div>
+    </div>
+    <p class="sec-intro">Everything the session touched converges into four reusable patterns — the true payoff of trading ideas for a day and a half.</p>
+
+    <div class="wheel-frame">
+      <div class="hub">v1<br>FIT ENGINE</div>
+      <div class="spokes"><div class="spoke"></div><div class="spoke"></div><div class="spoke"></div><div class="spoke"></div></div>
+      <div class="rim"></div>
+    </div>
+
+    <div class="synth-grid">
+      <div class="synth-card">
+        <div class="synth-num">1</div>
+        <h4>The canonical‑mapping pattern</h4>
+        <p>Name‑synonym map, unit normalization (→cm), and usage‑taxonomy mapping are <b>one reusable pattern</b>: a canonical target plus a per‑vendor dictionary — the same trick, applied three times.</p>
+      </div>
+      <div class="synth-card">
+        <div class="synth-num">2</div>
+        <h4>The trust‑envelope pattern</h4>
+        <p>Provenance + date per field is <b>one trust envelope</b> that quietly powers three separate features: vendor‑conflict arbitration, the "verified by brand" badge, and the estimated‑vs‑confirmed measurement label.</p>
+      </div>
+      <div class="synth-card">
+        <div class="synth-num">3</div>
+        <h4>The input‑precision spectrum</h4>
+        <p>Height‑only mode and geometry‑target/expert mode aren't competing entry points — they're <b>two ends of one spectrum</b>, from "just my height" to "I know my exact reach in mm".</p>
+      </div>
+      <div class="synth-card">
+        <div class="synth-num">4</div>
+        <h4>Deferring shops sharpens the bet</h4>
+        <p>Pushing the whole shop/map layer out of Must resolves the "map‑not‑essential‑to‑fit" tension outright: <b>the fit layer alone must be worth using</b> before any where‑to‑buy utility exists.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Bike Selection Platform — Brainstorming session · Creative Partner mode
+    <span class="mono">Morphological Analysis → SCAMPER → What‑If Scenarios → Convergence · started 2026‑09‑21, locked 2026‑09‑22 21:37</span>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // ---------- theme toggle ----------
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var KEY = 'bike-brainstorm-theme';
+  function systemDark(){
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch(e){ return false; }
+  }
+  function current(){
+    var t = root.getAttribute('data-theme');
+    return t || (systemDark() ? 'dark' : 'light');
+  }
+  function paint(){
+    btn.textContent = current() === 'dark' ? '☀' : '☾';
+  }
+  try {
+    var saved = localStorage.getItem(KEY);
+    if (saved) root.setAttribute('data-theme', saved);
+  } catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(KEY, next); } catch(e){}
+    paint();
+  });
+
+  // ---------- route nav scrollspy ----------
+  var links = Array.prototype.slice.call(document.querySelectorAll('.route-nav a'));
+  var targets = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window && targets.length){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var idx = targets.indexOf(entry.target);
+        if (idx === -1) return;
+        if (entry.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('active'); });
+          links[idx].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+
+  // ---------- weight-slider heatmap demo ----------
+  var demoBikes = [
+    { name: 'Vendor A · Endurance 54', dev: { stack: 2,  reach: 4,  ttube: 1  } },
+    { name: 'Vendor A · Race 52',       dev: { stack: 18, reach: 9,  ttube: 6  } },
+    { name: 'Vendor B · Gravel M',      dev: { stack: 6,  reach: 2,  ttube: 10 } },
+    { name: 'Vendor B · Allroad S',     dev: { stack: 22, reach: 15, ttube: 3  } }
+  ];
+  var wStack = document.getElementById('w-stack');
+  var wReach = document.getElementById('w-reach');
+  var wTtube = document.getElementById('w-ttube');
+  var outStack = document.getElementById('out-stack');
+  var outReach = document.getElementById('out-reach');
+  var outTtube = document.getElementById('out-ttube');
+  var barsEl = document.getElementById('bars');
+
+  function scoreOf(bike, w){
+    var total = w.stack + w.reach + w.ttube;
+    if (total === 0) return 0;
+    var weighted = (bike.dev.stack * w.stack + bike.dev.reach * w.reach + bike.dev.ttube * w.ttube) / total;
+    return Math.max(0, Math.min(100, 100 - weighted * 3));
+  }
+  function colorFor(score){
+    if (score >= 82) return 'var(--heat-ideal)';
+    if (score >= 55) return 'var(--heat-warm)';
+    return 'var(--heat-hot)';
+  }
+  function render(){
+    var w = { stack: +wStack.value, reach: +wReach.value, ttube: +wTtube.value };
+    outStack.textContent = w.stack;
+    outReach.textContent = w.reach;
+    outTtube.textContent = w.ttube;
+    var scored = demoBikes.map(function(b){ return { name: b.name, score: scoreOf(b, w) }; });
+    scored.sort(function(a, b2){ return b2.score - a.score; });
+    barsEl.innerHTML = '';
+    scored.forEach(function(b){
+      var row = document.createElement('div');
+      row.className = 'bar-row';
+      var label = document.createElement('div');
+      label.textContent = b.name;
+      var track = document.createElement('div');
+      track.className = 'bar-track';
+      var fill = document.createElement('div');
+      fill.className = 'bar-fill';
+      fill.style.width = b.score.toFixed(0) + '%';
+      fill.style.background = colorFor(b.score);
+      track.appendChild(fill);
+      var val = document.createElement('div');
+      val.className = 'mono';
+      val.style.textAlign = 'right';
+      val.textContent = b.score.toFixed(0);
+      row.appendChild(label); row.appendChild(track); row.appendChild(val);
+      barsEl.appendChild(row);
+    });
+  }
+  [wStack, wReach, wTtube].forEach(function(el){ el.addEventListener('input', render); });
+  render();
+})();
+</script>
+</body>
+</html>
