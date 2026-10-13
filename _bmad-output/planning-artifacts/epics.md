@@ -119,6 +119,19 @@ A rider's last entry is remembered on their device, a labelled geometry diagram 
 A rider can open the self-hosted app over HTTPS behind the existing Authentik front door, install it on a phone, and use it in the shop. Delivers the Docker image, deployment, PWA manifest and service worker, responsive phone layout and offline behaviour.
 **FRs covered:** none new; delivers NFR1, NFR6, NFR7 and UX-DR16, UX-DR17
 
+## Story Delivery Rules (apply to every story)
+
+Every story is built test-first (red, green, refactor). Each story also carries a `**Delivery:**` line stating how these rules apply to it.
+
+- **Red first:** before writing code for a Given/When/Then scenario, write a test that encodes it and watch it fail for the right reason.
+- **Green minimally:** write the least code that makes it pass; then refactor with the tests green.
+- **One scenario at a time:** one failing test at a time, not a batch of tests followed by a batch of code.
+- **Test through public interfaces** (`core` functions, CLI commands, HTTP routes), not private helpers; no mocking of `core`.
+- **Seams:** core logic is tested without a database, network, browser or LLM; adapter tests use committed fixture excerpts, never the live LLM (NFR8).
+- **Bugs:** a bug found later gets a failing test that reproduces it before the fix.
+- **Done means:** all scenario tests pass and the quality gate (`ruff` and `pytest`) is green.
+- **Not test-driven:** spikes, written decisions, documents and operational runs have no failing test to write first; their `**Delivery:**` line says so and names the check that replaces it. Any code they touch is still test-first.
+
 ## Epic 1: Fit judgment you can trust
 
 The builders can ask "does this bike's geometry fit this rider?" and get a deterministic, tested answer for each of the 5 Core Parameters, before any real data or UI exists.
@@ -128,6 +141,8 @@ The builders can ask "does this bike's geometry fit this rider?" and get a deter
 As a builder,
 I want a runnable Python project with pre-commit and CI wired in,
 So that every later story, from any agent, passes the same checks.
+
+**Delivery:** TDD from the first change: write the smoke test and the import-boundary test first, watch them fail, then scaffold until they pass. Hook and CI wiring are verified by running the same commands.
 
 **Acceptance Criteria:**
 
@@ -152,6 +167,8 @@ As a builder,
 I want one definition of the parameters, units and record shapes,
 So that the web app and ingestion can never disagree on what a value means.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** `core/schema`
@@ -174,6 +191,8 @@ As a builder,
 I want a registry with one evaluator per Core Parameter that returns "unknown" when none exists,
 So that a parameter nobody has defined a rule for never gets a guessed colour.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** `RiderInput` (height_cm, inseam_cm, style)
@@ -194,6 +213,8 @@ So that a parameter nobody has defined a rule for never gets a guessed colour.
 As a rider,
 I want stack and reach judged against my height and inseam,
 So that the two most telling cells carry a real answer.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -217,6 +238,8 @@ As the product owner,
 I want an explicit decision for each remaining Core Parameter,
 So that "unknown" is a recorded choice and not an accident.
 
+**Delivery:** TDD for the evaluators and the `unknown` tests; the HTA, STA and BB decision itself is a written document, recorded before its tests are written.
+
 **Acceptance Criteria:**
 
 **Given** HTA, STA and BB
@@ -237,6 +260,8 @@ So that "unknown" is a recorded choice and not an accident.
 As a rider,
 I want each bike to get an excluded flag, a best size, an In-Range Count and a sort order,
 So that the table is computed the same way everywhere.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -261,6 +286,8 @@ As a builder,
 I want a command that prints the fit table for a rider against sample bikes,
 So that I can see the fit logic working before any real data or UI exists.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** a fixture file of bikes
@@ -283,6 +310,8 @@ As a builder,
 I want one adapter interface and one approved-file format,
 So that every vendor produces records the pipeline and loader handle identically.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** the adapter interface
@@ -299,6 +328,8 @@ So that every vendor produces records the pipeline and loader handle identically
 As a builder,
 I want one helper that calls an LLM and returns only validated structured output,
 So that no adapter handles provider errors differently.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -321,6 +352,8 @@ As the product owner,
 I want Claude and OpenAI compared on real Van Rysel geometry pages,
 So that the default provider is chosen on evidence.
 
+**Delivery:** Not test-driven (spike). The hand-checked answer is the oracle. Any code that is kept (config default, provider wiring) is test-first.
+
 **Acceptance Criteria:**
 
 **Given** one representative page and one difficult page
@@ -337,6 +370,8 @@ So that the default provider is chosen on evidence.
 As a builder,
 I want an adapter that reads Van Rysel's geometry tables per model and size,
 So that the baseline vendor lands in the canonical schema.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -359,6 +394,8 @@ As a builder,
 I want conflicting values settled by fixed rules,
 So that no source silently overrides another.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** two sources for a field
@@ -376,6 +413,8 @@ As a builder,
 I want one command that ingests a vendor PDF into a staging area,
 So that I can re-run it safely and restrict it to a page range.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** `ingest van_rysel --pages 12-40`
@@ -392,6 +431,8 @@ So that I can re-run it safely and restrict it to a page range.
 As a builder,
 I want to see everything extracted and approve or abort,
 So that nothing unreviewed reaches the catalog.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -414,6 +455,8 @@ As a builder,
 I want the read-only database rebuilt from approved files,
 So that the files in git stay the single source of truth.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** `data/ingested/`
@@ -430,6 +473,8 @@ So that the files in git stay the single source of truth.
 As the product owner,
 I want Van Rysel's full catalog ingested and approved,
 So that there is real data for the rest of the project.
+
+**Delivery:** Not test-driven (operational run). A bug found in the adapter or pipeline gets a failing fixture test before its fix.
 
 **Acceptance Criteria:**
 
@@ -452,6 +497,8 @@ As a builder,
 I want KTM's layouts and naming compared with the contract,
 So that any contract gap is found before an adapter is written.
 
+**Delivery:** Not test-driven (probe note). A contract change, if one is needed, is test-first and keeps all existing tests passing.
+
 **Acceptance Criteria:**
 
 **Given** the KTM PDFs
@@ -468,6 +515,8 @@ So that any contract gap is found before an adapter is written.
 As a builder,
 I want KTM's vocabulary mapped onto the canonical schema as data,
 So that mapping is reviewable without reading code.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -486,6 +535,8 @@ As a builder,
 I want an adapter that reads KTM's tables per model and size,
 So that KTM lands in the same canonical shape.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** committed fixture excerpts for each layout variant
@@ -503,6 +554,8 @@ As the product owner,
 I want KTM's full catalog ingested and approved,
 So that both vendors appear in the same catalog.
 
+**Delivery:** Not test-driven (operational run). A bug found in the adapter or pipeline gets a failing fixture test before its fix.
+
 **Acceptance Criteria:**
 
 **Given** the real PDFs
@@ -519,6 +572,8 @@ So that both vendors appear in the same catalog.
 As a builder,
 I want a checklist for adding a vendor,
 So that a third vendor doesn't need rediscovery.
+
+**Delivery:** Not test-driven (document). The check is a literal walkthrough by the co-builder and by an agent that did not write either adapter.
 
 **Acceptance Criteria:**
 
@@ -540,6 +595,8 @@ As a rider,
 I want a page that loads in the app's look,
 So that everything else has a place to land.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** a built catalog
@@ -556,6 +613,8 @@ So that everything else has a place to land.
 As a rider,
 I want to enter height, inseam and style in cm or ft·in,
 So that I can use the units I think in.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -578,6 +637,8 @@ As a rider,
 I want one row per bike with five coloured parameter cells,
 So that I can see how each bike fits me at a glance.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** a submitted rider
@@ -598,6 +659,8 @@ So that I can see how each bike fits me at a glance.
 As a rider,
 I want to see a cell's value, my range and the distance from it,
 So that I know how far off a borderline bike is.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -620,6 +683,8 @@ As a rider,
 I want to sort by any parameter or by In-Range Count,
 So that I can find the closest bikes for what I care about.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** results
@@ -640,6 +705,8 @@ So that I can find the closest bikes for what I care about.
 As a rider,
 I want to know how many bikes fit and see the ones that were excluded,
 So that no suitable bike is hidden from me without a reason.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -662,6 +729,8 @@ As a rider,
 I want my last entry remembered on this device,
 So that I don't retype it every visit.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** a submit
@@ -683,6 +752,8 @@ As a rider,
 I want a labelled bike diagram above the table,
 So that I can tell what each code measures.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** Results
@@ -699,6 +770,8 @@ So that I can tell what each code measures.
 As a rider using a keyboard or screen reader,
 I want to move through and understand the table,
 So that the fit answer is available to me too.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -720,6 +793,8 @@ So that the fit answer is available to me too.
 As a rider,
 I want the page to tell me what is happening,
 So that a wait or a failure never looks like a result.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -750,6 +825,8 @@ As the product owner,
 I want one Docker image that contains the app and its catalog,
 So that the server needs nothing else to run it.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** the repo
@@ -766,6 +843,8 @@ So that the server needs nothing else to run it.
 As the product owner,
 I want the app reachable over HTTPS with sign-in handled in front of it,
 So that it is private without adding accounts to the app.
+
+**Delivery:** Not test-driven (deployment). The health check endpoint and the identity-header handling are test-first; proxy and sign-in are verified by hand.
 
 **Acceptance Criteria:**
 
@@ -784,6 +863,8 @@ As a rider,
 I want to install the app on my phone,
 So that it opens like an app in the shop.
 
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
+
 **Acceptance Criteria:**
 
 **Given** the app over HTTPS
@@ -796,6 +877,8 @@ So that it opens like an app in the shop.
 As a rider,
 I want the app to open without a connection and say so,
 So that I'm never shown old results as current.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -813,6 +896,8 @@ So that I'm never shown old results as current.
 As a rider in a shop,
 I want the table readable on my phone,
 So that I can check a bike in front of me.
+
+**Delivery:** TDD per Story Delivery Rules: one failing test per scenario below, written before the code.
 
 **Acceptance Criteria:**
 
@@ -833,6 +918,8 @@ So that I can check a bike in front of me.
 As the product owner,
 I want to prove the server holds nothing that isn't in git,
 So that losing it costs nothing.
+
+**Delivery:** Not test-driven (operational proof). The check is a literal run of the written steps on a clean machine.
 
 **Acceptance Criteria:**
 
