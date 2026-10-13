@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    # Feature branches run via their pull request; only main runs on push.
+    branches: [main]
   pull_request:
 
 jobs:
