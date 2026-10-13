@@ -10,7 +10,7 @@ Self-hosted PWA web app (≤5 users) matching a rider's body measurements agains
 - Never `git commit` or `git push` — stage changes at most; the user reviews and commits/pushes themselves.
 - Parallel AI agents each work in their own git worktree — never have more than one agent edit the shared main checkout directly; merge worktrees back via normal git.
 - Build test-first (red, green, refactor): write a failing test per acceptance scenario before the code. Spikes, written decisions, documents and operational runs are exempt; each story's `**Delivery:**` line says which. Rules: "Story Delivery Rules" in `_bmad-output/planning-artifacts/epics.md`.
-- Every stack choice ships with CI and a pre-commit hook (lint, format, tests appropriate to the chosen language). Here: one `pre-commit` config running ruff (lint + format) and pytest, and GitHub Actions running the same commands. TODO until story 1.1 lands: no hook, CI or `pyproject.toml` exists yet.
+- Every stack choice ships with CI and a pre-commit hook (lint, format, tests appropriate to the chosen language). Here: `.pre-commit-config.yaml` runs `ruff check`, `ruff format --check` and `pytest` via `uv run`, and `.github/workflows/ci.yml` runs the same three commands. Enable the hook once per clone with `uv run pre-commit install`.
 
 ## Where things are
 
@@ -21,7 +21,9 @@ Self-hosted PWA web app (≤5 users) matching a rider's body measurements agains
 
 ## Running and verifying
 
-- TODO (story 1.1): record exact commands after scaffold — expected `uv sync`, `uv run pytest`, `uv run ruff check` / `ruff format`. Verify on the first refresh after code exists.
+- Setup: `uv sync` (Python 3.13+, dev tools included).
+- Gate, run before handing work over (identical in hook and CI): `uv run ruff check .`, `uv run ruff format --check .`, `uv run pytest`. Apply formatting with `uv run ruff format .`.
+- `tests/test_import_boundaries.py` enforces the layer boundaries below; `_bmad/` and `_bmad-output/` are excluded from ruff.
 
 ## Conventions that differ from defaults
 
