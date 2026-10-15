@@ -1,9 +1,11 @@
 """Stack and Reach rules, with values from docs/fit-rules.md (rider height 175 cm)."""
 
+import math
+
 import pytest
 
 from fit_my_ride.core.fit import UNKNOWN, EvaluatorRegistry
-from fit_my_ride.core.fit_rules import register_stack_reach
+from fit_my_ride.core.fit_rules import STYLE_OFFSETS_CM, register_stack_reach
 from fit_my_ride.core.schema import RiderInput, Style
 
 
@@ -87,3 +89,29 @@ def test_other_core_parameters_stay_unknown(registry):
 
 def test_missing_value_is_unknown(registry):
     assert registry.evaluate("S", rider(), None) is UNKNOWN
+
+
+@pytest.mark.parametrize("code", ["S", "R"])
+def test_nan_value_is_unknown_not_in_range(registry, code):
+    assert registry.evaluate(code, rider(), float("nan")) is UNKNOWN
+
+
+@pytest.mark.parametrize(("code", "value"), [("S", 54.7499999), ("R", 39.6250001)])
+def test_sub_micron_miss_is_positive_zero(registry, code, value):
+    result = registry.evaluate(code, rider(), value)
+    assert result == 0
+    assert math.copysign(1.0, result) == 1.0
+
+
+def test_every_style_has_an_offset_row_and_a_test_row():
+    assert set(STYLE_OFFSETS_CM) == set(Style)
+    assert {style for style, _, _ in OFFSETS} == set(Style)
+    for style, s_off, r_off in OFFSETS:
+        assert STYLE_OFFSETS_CM[style] == (s_off, r_off)
+
+
+@pytest.mark.parametrize(("code", "value"), [("S", 59.0), ("S", 56.0), ("R", 40.0), ("R", 38.0)])
+def test_inseam_is_not_used_by_either_parameter(registry, code, value):
+    assert registry.evaluate(code, rider(inseam=50), value) == registry.evaluate(
+        code, rider(inseam=120), value
+    )

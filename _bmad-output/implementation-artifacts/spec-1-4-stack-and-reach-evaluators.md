@@ -30,3 +30,4 @@ context:
 - Deviations and edges are rounded to 6 decimals so float noise never turns an on-edge value into a deviation.
 - Gate green: ruff check, ruff format --check, pytest (100 passed). Not committed, per the user's standing rule.
 - Review: no subagents spawned (not requested); inline self-review only, no findings.
+- Review fixes (bmad-review): non-finite bike values now return `UNKNOWN` (NaN used to score as in-range); `-0.0` normalised to `0.0`; tests now pin that every `Style` has an offset row and a test row, and that inseam is ignored by both S and R. Gate green (109 passed). Uncommitted.
