@@ -127,3 +127,48 @@ def complete_geometry(partial: Mapping[str, ParameterValue]) -> dict[str, Parame
     for code in partial:
         parameter(code)
     return {p.code: partial.get(p.code, ParameterValue(None, NOT_REPORTED)) for p in PARAMETERS}
+
+
+class Style(StrEnum):
+    """Usage Taxonomy: the fixed riding-style set, also the rider's style input."""
+
+    ROAD = "road"
+    GRAVEL = "gravel"
+    MTB = "mtb"
+    CITY_COMMUTE = "city_commute"
+    TOURING = "touring"
+    E_BIKE = "e_bike"
+
+
+class InvalidRiderInputError(ValueError):
+    """Raised when a rider input is outside its accepted range or set."""
+
+
+HEIGHT_RANGE_CM = (120, 230)
+INSEAM_RANGE_CM = (50, 120)
+
+
+@dataclass(frozen=True)
+class RiderInput:
+    """The rider's three inputs; invalid values raise with the accepted range named."""
+
+    height_cm: float
+    inseam_cm: float
+    style: Style
+
+    def __post_init__(self):
+        for label, value, (low, high) in (
+            ("height_cm", self.height_cm, HEIGHT_RANGE_CM),
+            ("inseam_cm", self.inseam_cm, INSEAM_RANGE_CM),
+        ):
+            if not low <= value <= high:
+                raise InvalidRiderInputError(
+                    f"{label} must be between {low} and {high}, got {value}"
+                )
+        try:
+            object.__setattr__(self, "style", Style(self.style))
+        except ValueError:
+            accepted = ", ".join(s.value for s in Style)
+            raise InvalidRiderInputError(
+                f"style must be one of {accepted}, got {self.style!r}"
+            ) from None
