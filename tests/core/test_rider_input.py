@@ -1,3 +1,5 @@
+from dataclasses import FrozenInstanceError
+
 import pytest
 
 from fit_my_ride.core.schema import InvalidRiderInputError, RiderInput, Style
@@ -43,3 +45,18 @@ def test_unknown_style_raises_typed_error():
 
 def test_style_accepts_taxonomy_value_string():
     assert RiderInput(178, 82, "gravel").style is Style.GRAVEL
+
+
+@pytest.mark.parametrize("bad", ["178", None, True])
+def test_non_numeric_measurement_raises_typed_error(bad):
+    with pytest.raises(InvalidRiderInputError, match="height_cm.*number"):
+        RiderInput(height_cm=bad, inseam_cm=82, style=Style.ROAD)
+    with pytest.raises(InvalidRiderInputError, match="inseam_cm.*number"):
+        RiderInput(height_cm=178, inseam_cm=bad, style=Style.ROAD)
+
+
+def test_rider_input_is_immutable_and_hashable():
+    rider = RiderInput(178, 82, Style.ROAD)
+    with pytest.raises(FrozenInstanceError):
+        rider.height_cm = 180
+    assert hash(rider) == hash(RiderInput(178, 82, "road"))

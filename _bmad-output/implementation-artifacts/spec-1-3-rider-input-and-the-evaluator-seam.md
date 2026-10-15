@@ -26,12 +26,17 @@ context:
 - Test-first, one scenario at a time (red seen before each piece of code).
 - `core/schema`: added `Style` (Usage Taxonomy), `RiderInput`, `InvalidRiderInputError`. `core/fit`: `UNKNOWN`, `Evaluator`, `EvaluatorRegistry` (per-instance, no global state; `register` replaces a slot). Only Core Parameters can be registered or evaluated; Optional ones raise.
 - Style accepts a `Style` or its string value; anything else raises `InvalidRiderInputError`.
-- Gate green: ruff check, ruff format --check, 66 tests including the boundary test.
+- Gate green: ruff check, ruff format --check, all tests including the boundary test.
 - Not committed, per the user's standing rule; sprint status set to `review`.
-- Review: no subagents spawned (not requested); inline self-review only. Rejected as low: bool/str inputs for heights (`True` passes the range), no `NaN` handling needed (NaN fails the range check and raises).
+- Review: no subagents spawned (not requested); inline self-review only. A later /bmad-review (adversarial, edge-case, verification-gap) found the items fixed below.
 
 ## Review Triage Log
 
 | Finding | Verdict | Route | Evidence |
 |---------|---------|-------|----------|
-| `RiderInput(True, ...)` or numeric strings | low | rejected | Unlikely misuse; web boundary parses input. |
+| `RiderInput(True, ...)` or numeric strings; non-numeric raised raw TypeError | medium | patch | Verified by probe. `True` and strings/None now raise `InvalidRiderInputError` ("must be a number"). Earlier note that `True` passed the range was wrong: it raised. |
+| Evaluator type excluded `Unknown`; results unchecked (`None`, `NaN`, `inf`, bool passed through) | medium | patch | Verified by probe. `Evaluator` returns `float | Unknown`; `evaluate` raises `InvalidEvaluationError` otherwise; `register` requires a callable. |
+| Missing value with a registered evaluator raised TypeError | medium | patch | Verified by probe. `evaluate` returns `UNKNOWN` for `None` or `ParameterValue(None, ...)`. |
+| Non-Core code raised bare ValueError | low | patch | Now `NotCoreParameterError(ValueError)`. |
+| Evaluator exception policy, deviation unit, Style wire values undocumented | low | patch | Documented in docstrings; propagation pinned by a test. |
+| `RiderInput` immutability and hashability unpinned | low | patch | Test added. |

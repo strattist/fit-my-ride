@@ -130,7 +130,11 @@ def complete_geometry(partial: Mapping[str, ParameterValue]) -> dict[str, Parame
 
 
 class Style(StrEnum):
-    """Usage Taxonomy: the fixed riding-style set, also the rider's style input."""
+    """Usage Taxonomy: the fixed riding-style set, also the rider's style input.
+
+    The string values are the wire format (URL parameter, approved files); renaming one
+    breaks existing links and data.
+    """
 
     ROAD = "road"
     GRAVEL = "gravel"
@@ -150,7 +154,10 @@ INSEAM_RANGE_CM = (50, 120)
 
 @dataclass(frozen=True)
 class RiderInput:
-    """The rider's three inputs; invalid values raise with the accepted range named."""
+    """The rider's three inputs; invalid values raise with the accepted range named.
+
+    `style` may be given as a `Style` or its string value; it is stored as a `Style`.
+    """
 
     height_cm: float
     inseam_cm: float
@@ -161,6 +168,8 @@ class RiderInput:
             ("height_cm", self.height_cm, HEIGHT_RANGE_CM),
             ("inseam_cm", self.inseam_cm, INSEAM_RANGE_CM),
         ):
+            if isinstance(value, bool) or not isinstance(value, int | float):
+                raise InvalidRiderInputError(f"{label} must be a number, got {value!r}")
             if not low <= value <= high:
                 raise InvalidRiderInputError(
                     f"{label} must be between {low} and {high}, got {value}"

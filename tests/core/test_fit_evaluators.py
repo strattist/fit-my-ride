@@ -1,7 +1,18 @@
 import pytest
 
-from fit_my_ride.core.fit import UNKNOWN, EvaluatorRegistry
-from fit_my_ride.core.schema import CORE_PARAMETERS, RiderInput, Style, UnknownParameterError
+from fit_my_ride.core.fit import (
+    UNKNOWN,
+    EvaluatorRegistry,
+    InvalidEvaluationError,
+    NotCoreParameterError,
+)
+from fit_my_ride.core.schema import (
+    CORE_PARAMETERS,
+    ParameterValue,
+    RiderInput,
+    Style,
+    UnknownParameterError,
+)
 
 RIDER = RiderInput(height_cm=178, inseam_cm=82, style=Style.ROAD)
 
@@ -62,11 +73,54 @@ def test_unknown_parameter_code_raises():
 
 
 def test_optional_parameter_cannot_have_an_evaluator():
-    with pytest.raises(ValueError, match="Core"):
+    with pytest.raises(NotCoreParameterError, match="Core"):
         EvaluatorRegistry().register("ST", band(0, 1))
-    with pytest.raises(ValueError, match="Core"):
+    with pytest.raises(NotCoreParameterError, match="Core"):
         EvaluatorRegistry().evaluate("ST", RIDER, 1.0)
 
 
 def test_unknown_is_not_a_number():
     assert not isinstance(UNKNOWN, (int, float))
+
+
+def test_missing_value_is_unknown_even_with_an_evaluator():
+    registry = EvaluatorRegistry()
+    registry.register("S", band(50.0, 56.0))
+    assert registry.evaluate("S", RIDER, None) is UNKNOWN
+    assert registry.evaluate("S", RIDER, ParameterValue(None, "not reported")) is UNKNOWN
+
+
+def test_parameter_value_is_unwrapped():
+    registry = EvaluatorRegistry()
+    registry.register("S", band(50.0, 56.0))
+    assert registry.evaluate("S", RIDER, ParameterValue(58.0)) == 2.0
+
+
+def test_evaluator_may_return_unknown():
+    registry = EvaluatorRegistry()
+    registry.register("S", lambda rider, value: UNKNOWN)
+    assert registry.evaluate("S", RIDER, 53.0) is UNKNOWN
+
+
+@pytest.mark.parametrize("bad", [None, float("nan"), float("inf"), "0", True])
+def test_evaluator_result_must_be_unknown_or_a_finite_number(bad):
+    registry = EvaluatorRegistry()
+    registry.register("S", lambda rider, value: bad)
+    with pytest.raises(InvalidEvaluationError, match="S"):
+        registry.evaluate("S", RIDER, 53.0)
+
+
+def test_registering_a_non_callable_raises():
+    with pytest.raises(TypeError):
+        EvaluatorRegistry().register("S", 5)
+
+
+def test_evaluator_errors_propagate():
+    registry = EvaluatorRegistry()
+
+    def broken(rider, value):
+        raise ZeroDivisionError
+
+    registry.register("S", broken)
+    with pytest.raises(ZeroDivisionError):
+        registry.evaluate("S", RIDER, 53.0)
